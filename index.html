@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生單助理｜AI 自動辨識單據</title>
+<meta name="description">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#005BAC;
+  --primary-dark:#0A3D91;
+  --primary-light:#5CC8D7;
+  --primary-pale:#E6F7FA;
+  --secondary:#00A7B5;
+  --accent:#7AC143;
+  --dark:#1F2937;
+  --mid:#667085;
+  --light:#F5F7FA;
+  --white:#FFFFFF;
+  --border:#D9E2EC;
+  --shadow:0 2px 16px rgba(0,91,172,.10);
+  --shadow-md:0 6px 32px rgba(0,91,172,.14);
+  --r:10px;--r2:8px;
+}
+html{scroll-behavior:smooth;font-size:16px;--header-h:80px}
+#s-intro,#s-analysis,#s-quote,#s-features,#s-scenarios,#s-integration,#s-stats{scroll-margin-top:var(--header-h)}
+body{background:var(--white);color:var(--dark);font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;line-height:1.7;overflow-x:hidden}
+
+/* ── STICKY HEADER ── */
+.site-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(30,136,229,.07)}
+.header-inner{max-width:1200px;margin:0 auto;padding:.9rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.brand-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;flex-shrink:0}
+.brand-name{font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;font-size:1.25rem;color:var(--dark);line-height:1.1}
+.brand-sub{font-size:.65rem;color:var(--mid);margin-top:.05rem;font-weight:400}
+.header-nav{flex:1;display:flex;justify-content:center}
+.nav-pills{display:flex;gap:.25rem;background:var(--light);border-radius:999px;padding:.25rem}
+.nav-pills a{padding:.38rem 1rem;border-radius:999px;font-size:.82rem;color:var(--mid);text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-pills a.active,.nav-pills a:hover{background:var(--primary);color:#fff}
+.header-cta{margin-left:auto}
+.btn-primary{display:inline-flex;align-items:center;gap:.4rem;background:var(--primary);color:#fff;font-weight:700;font-size:.88rem;padding:.55rem 1.2rem;border-radius:var(--r2);text-decoration:none;border:none;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{display:inline-flex;align-items:center;gap:.4rem;color:var(--primary);font-size:.88rem;padding:.55rem 1.2rem;border-radius:var(--r2);text-decoration:none;border:2px solid var(--primary);cursor:pointer;font-family:inherit;transition:all .2s;font-weight:600}
+.btn-ghost:hover{background:var(--primary-pale)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--dark)}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#EEF6FF 0%,#F0F4FF 50%,#EEF6FF 100%);padding:2.75rem 1.5rem 2.5rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0}
+.hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:2rem}
+.hero-copy{flex:1;min-width:0}
+.hero-eyebrow{font-size:.78rem;color:var(--primary);letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.hero-eyebrow::before{content:'';width:28px;height:2px;background:var(--primary)}
+.hero-h1{font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;font-size:2.6rem;line-height:1.2;color:var(--dark);margin-bottom:.75rem}
+.hero-h1 em{font-style:italic;color:var(--primary)}
+.hero-lead{font-size:1rem;color:var(--mid);line-height:1.75;max-width:520px;margin-bottom:1.1rem}
+.hero-pain{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem}
+.pain-item{display:flex;align-items:center;gap:.7rem;font-size:.88rem;color:var(--dark);background:var(--white);border:1px solid var(--border);border-radius:var(--r2);padding:.55rem .85rem;box-shadow:var(--shadow)}
+.pain-item .pi{font-size:1rem;flex-shrink:0}
+.hero-visual{flex:0 0 440px;max-width:840px}
+
+/* ── SECTION CONTAINER ── */
+.section{padding:2.5rem 1.5rem;border-bottom:1px solid var(--border)}
+.section.alt{background:var(--light)}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-eyebrow{font-size:.75rem;color:var(--primary);letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.section-eyebrow::before{content:'';width:22px;height:2px;background:var(--primary)}
+.section-h2{font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;font-size:1.85rem;color:var(--dark);line-height:1.3;margin-bottom:.5rem}
+.section-lead{font-size:.95rem;color:var(--mid);line-height:1.75;max-width:560px;margin-bottom:1.25rem}
+.text-center-header{text-align:center;margin-bottom:1.75rem}
+.text-center-header .section-eyebrow,.text-center-header .section-lead{margin-left:auto;margin-right:auto}
+.text-center-header .section-eyebrow{justify-content:center}
+.text-center-header .section-eyebrow::before{display:none}
+
+/* ── FEATURE CARDS (3-col) ── */
+.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.card-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.feat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.feat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.feat-icon{width:40px;height:40px;background:var(--primary-pale);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;margin-bottom:.65rem;font-size:1.15rem}
+.feat-card h3{font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.35rem}
+.feat-card p{font-size:.82rem;color:var(--mid);line-height:1.65}
+
+/* ── SCENARIO CARDS ── */
+.scen-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.3rem 1.2rem;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s;display:flex;flex-direction:column}
+.scen-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.scen-icon{width:44px;height:44px;background:var(--primary-pale);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;margin-bottom:.85rem;font-size:1.3rem;flex-shrink:0}
+.scen-card h3{font-size:.98rem;font-weight:700;color:var(--dark);margin-bottom:.6rem}
+.scen-quote{font-size:.84rem;color:var(--mid);line-height:1.8;font-style:italic;position:relative;padding-left:.85rem;border-left:2px solid var(--primary-light)}
+
+/* ── INTERACTIVE ANALYSIS DEMO ── */
+.demo-container{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-md);overflow:hidden}
+.demo-header{background:var(--primary-pale);border-bottom:1px solid var(--border);padding:.6rem 1rem;font-size:.75rem;color:var(--primary);font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.demo-tabs{display:flex;gap:.3rem;margin-bottom:.75rem;border-bottom:1px solid var(--border);padding-bottom:.5rem;overflow-x:auto}
+.demo-tab{padding:.35rem .6rem;font-size:.74rem;border-radius:var(--r2);background:var(--light);border:1px solid var(--border);color:var(--mid);cursor:pointer;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:.25rem;white-space:nowrap}
+.demo-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.demo-body{padding:1.25rem}
+.dwg-stage{width:100%;border:1.5px dashed rgba(30,136,229,.3);border-radius:var(--r2);background:rgba(30,136,229,.02);padding:.75rem;margin-bottom:.75rem;position:relative;overflow:hidden}
+.dwg-preview{width:100%;min-height:120px;height:auto;background:var(--light);border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:.5rem}
+.dwg-svg-wrap{position:relative;width:200px;height:78px}
+.dwg-svg-wrap svg{width:100%;height:100%}
+.ai-scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);top:0;opacity:0}
+.ai-scan-line.active{opacity:1;animation:scanDwg 1.8s ease-in-out forwards}
+@keyframes scanDwg{0%{top:0%}100%{top:100%}}
+.dwg-overlay{position:absolute;inset:0;background:rgba(245,247,250,.75);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s;border-radius:6px}
+.dwg-overlay.show{opacity:1}
+.loading-dots{display:flex;gap:5px;align-items:center}
+.loading-dots span{width:6px;height:6px;background:var(--primary);border-radius:50%;animation:blink 1s infinite}
+.loading-dots span:nth-child(2){animation-delay:.15s}
+.loading-dots span:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1.1)}}
+@keyframes blinkCaret{0%,49%{opacity:1}50%,100%{opacity:0}}
+.ai-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:.28rem .4rem;margin-top:.6rem}
+.ar{background:var(--light);border:1px solid var(--border);border-radius:6px;padding:.32rem .65rem;font-size:.72rem;display:flex;align-items:baseline;justify-content:space-between;gap:.45rem;white-space:nowrap;overflow:hidden}
+.ar .ak{color:var(--primary);font-size:.64rem;font-weight:700;flex-shrink:0}
+.ar .ak::after{content:':'}
+.ar .av2{color:var(--dark);font-size:.72rem;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.s2-chip{cursor:pointer;background:#fff;border:1px solid var(--border);border-radius:8px;padding:.4rem .5rem;font-size:.6rem;line-height:1.5;transition:all .3s}
+.s2-chip>div:first-child{margin-bottom:.1rem}
+.s2-chip:hover{border-color:var(--primary);background:var(--primary-pale)}
+.s2-reco-bc{font-size:.58rem;color:var(--mid);padding-bottom:.4rem;border-bottom:1px solid var(--border);margin-bottom:.55rem}
+.s2-reco-bc span{color:var(--primary);margin:0 .15rem}
+.s2-reco-bc b{color:var(--dark)}
+.s2-reco-filters{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.55rem}
+.s2-reco-frow{display:flex;flex-direction:column;gap:.12rem}
+.s2-reco-flbl{font-size:.52rem;color:var(--mid)}
+.s2-reco-finput{font-size:.58rem;padding:.28rem .4rem;border:1px solid var(--border);border-radius:6px;background:#fff;color:#aaa;width:100%;box-sizing:border-box}
+.s2-reco-card{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:.5rem .6rem}
+.s2-reco-kv{display:flex;font-size:.58rem;padding:.22rem 0;border-bottom:1px dashed rgba(0,0,0,.08);gap:.3rem}
+.s2-reco-kv:last-child{border-bottom:none}
+.s2-reco-kv .k{width:52px;flex-shrink:0;color:var(--mid)}
+.s2-reco-kv .v{color:var(--dark);line-height:1.6}
+.demo-btns{display:flex;gap:.5rem;margin-top:.6rem}
+.dbtn{flex:1;background:none;border:1px solid var(--border);border-radius:var(--r2);padding:.45rem .6rem;font-size:.82rem;font-family:inherit;color:var(--mid);cursor:pointer;transition:all .2s}
+.dbtn:disabled{opacity:.45;cursor:not-allowed;color:var(--mid);background:var(--light)}
+.dbtn:disabled:hover{border-color:var(--border);color:var(--mid)}
+.dbtn:hover{border-color:var(--primary);color:var(--primary)}
+.dbtn.ok{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+.dbtn.ok:hover{background:var(--primary-dark)}
+
+/* ── SCENARIO INTRO (前導頁) ── */
+.scenario-intro{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.5rem;padding:2rem 1rem;min-height:355px}
+.scenario-intro .si-icon{width:60px;height:60px;border-radius:50%;background:var(--primary-pale);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:.35rem}
+.scenario-intro h3{font-size:1.02rem;font-weight:700;color:var(--dark)}
+.scenario-intro p{font-size:.82rem;color:var(--mid);max-width:280px;line-height:1.65}
+.scenario-intro .dbtn{flex:none;padding:.55rem 1.5rem;margin-top:.4rem}
+
+/* ── QUOTE STEPS ── */
+.quote-steps{display:flex;flex-direction:column;gap:.4rem;margin:.4rem 0}
+.qs{display:flex;align-items:center;gap:.6rem;padding:.45rem .75rem;background:var(--light);border:1px solid var(--border);border-radius:var(--r2);font-size:.82rem;opacity:.45;transition:all .4s}
+.qs.active{opacity:1;border-color:rgba(30,136,229,.4);background:var(--primary-pale)}
+.qs.done{opacity:1;border-color:rgba(2,136,209,.3);background:#F0F8FF}
+.qs-icon{font-size:1rem;flex-shrink:0}
+.qs-bar{flex:1}
+.qs-label{font-size:.78rem;color:var(--dark)}
+.qs-prog{height:3px;background:var(--border);border-radius:2px;margin-top:.3rem;overflow:hidden}
+.qs-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:2px;width:0%;transition:width .6s ease}
+.qs.done .qs-fill{background:#10b981;width:100% !important}
+
+/* ── FEATURE CHIP GRID (interactive) ── */
+.feat-chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-bottom:.6rem}
+.fc{background:var(--light);border:1px solid var(--border);border-radius:var(--r2);padding:.6rem .85rem;font-size:.85rem;color:var(--mid);cursor:pointer;font-family:inherit;transition:all .22s;text-align:left;display:flex;align-items:center;gap:.5rem}
+.fc:hover,.fc.on{background:var(--primary-pale);border-color:rgba(30,136,229,.5);color:var(--dark)}
+.fc .fi{font-size:1.05rem;flex-shrink:0}
+.fc-det{display:none}.fc-det.show{display:block;animation:fadeIn .3s ease}
+
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.sp{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.sp .n{font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;font-size:1.75rem;color:var(--primary);display:block;line-height:1.1;margin-bottom:.25rem}
+.sp .l{font-size:.78rem;color:var(--mid)}
+
+/* ── INTEGRATION LIST ── */
+.integ-two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.ig-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.integ-list{display:flex;flex-direction:column;gap:.6rem}
+.ig{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem .9rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow)}
+.ig-icon{width:36px;height:36px;background:var(--primary-pale);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ig-t{font-size:.9rem;font-weight:700;color:var(--dark);margin-bottom:.12rem}
+.ig-d{font-size:.78rem;color:var(--mid);line-height:1.55}
+
+
+/* ── TWO COLUMN LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center}
+
+/* ── FIXED FLOATS ── */
+.float-consult{position:fixed;left:1rem;bottom:5rem;z-index:50;border-radius:var(--r2);overflow:hidden}
+.float-consult-inner{background:var(--primary);color:#fff;padding:1.2rem .65rem;width:46px;display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
+.float-consult-inner i{font-size:1.2rem}
+.float-consult-inner span{font-size:.62rem;font-weight:700;line-height:1.4;text-align:center;letter-spacing:.05em}
+.float-top{position:fixed;right:1rem;bottom:1rem;z-index:50;border-radius:var(--r2);overflow:hidden}
+.float-top-btn{background:var(--primary);color:#fff;border:none;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.float-top-btn:hover{background:var(--primary-dark)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .hero-inner{flex-direction:column}
+  .hero-visual{max-width:100%;width:100%}
+  .card-grid-3,.card-grid-4,.stat-grid{grid-template-columns:1fr 1fr}
+  .two-col,.integ-two-col{grid-template-columns:1fr}
+  .header-nav{display:none}
+  .hamburger{display:block}
+}
+@media(max-width:560px){
+  .card-grid-3,.card-grid-4,.stat-grid{grid-template-columns:1fr}
+  .hero-h1{font-size:2rem}
+  .section-h2{font-size:1.6rem}
+  .feat-chip-grid{grid-template-columns:1fr}
+}
+
+/* 核心產品與技術解決方案 */
+.solution-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.solution-card{display:flex;flex-direction:column;height:100%;padding:1.25rem;background:#fff;border:1px solid var(--border);border-radius:var(--r2);text-decoration:none;transition:transform .2s,box-shadow .2s}
+.solution-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(30,136,229,.14)}
+.solution-icon{width:2.8rem;height:2.8rem;display:flex;align-items:center;justify-content:center;margin-bottom:.8rem;border-radius:50%;background:var(--primary-pale);color:var(--primary);font-size:1.35rem}
+.solution-title{font-size:1rem;font-weight:700;color:var(--dark);line-height:1.5;margin-bottom:.55rem}
+.solution-desc{font-size:.82rem;color:var(--mid);line-height:1.75;margin-bottom:1rem}
+.solution-link{margin-top:auto;color:var(--primary);font-size:.78rem;font-weight:700}
+@media(max-width:900px){.solution-grid{grid-template-columns:1fr}}
+.contact-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:stretch}
+.contact-box{padding:1.5rem;background:#fff;border:1px solid var(--border);border-radius:var(--r2)}
+.contact-box h3{font-size:1.1rem;color:var(--dark);margin-bottom:.6rem}
+.contact-box p{font-size:.85rem;color:var(--mid);line-height:1.75;margin-bottom:1rem}
+.social-links{display:flex;flex-wrap:wrap;gap:.65rem}
+.social-link{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem .8rem;border-radius:8px;background:var(--primary-pale);color:var(--primary);font-size:.82rem;font-weight:700;text-decoration:none;transition:background .2s,transform .2s}
+.social-link:hover{background:#d6eaff;transform:translateY(-2px)}
+.social-link i{font-size:1.1rem}
+.contact-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.1rem;border-radius:8px;background:var(--primary);color:#fff;text-decoration:none;font-size:.85rem;font-weight:700;box-shadow:0 4px 12px rgba(30,136,229,.2);transition:background .2s,transform .2s}
+.contact-cta:hover{background:var(--primary-dark);transform:translateY(-2px)}
+@media(max-width:700px){.contact-panel{grid-template-columns:1fr}}
+
+/* Brand palette refinements */
+.hero{background:linear-gradient(135deg,#F5F7FA 0%,#E6F7FA 50%,#F5F7FA 100%)}
+.solution-card:hover{border-color:var(--secondary)}
+.social-link:hover{background:#D9F3F6}
+.sc-fill,.qs-fill{background:var(--secondary)}
+.badge-new{background:var(--accent)}
+
+/* -- UTILITY CLASSES (auto-extracted from repeated inline styles) -- */
+.u-badge-box{width:100%;max-width:300px;background:#fff;border:1.5px solid var(--primary);border-radius:var(--r2);padding:.5rem .7rem;text-align:center;font-size:.78rem;font-weight:700;color:var(--dark)}
+.u-cell-end-dark{display:flex;align-items:flex-end;justify-content:flex-end;min-height:2.6rem;padding:.5rem .5rem;font-size:.68rem;color:var(--dark)}
+.u-cell-start-dark{display:flex;align-items:flex-end;min-height:2.6rem;padding:.5rem .5rem;font-size:.68rem;color:var(--dark)}
+.u-cell-start-dark-bold{display:flex;align-items:flex-end;min-height:2.6rem;padding:.5rem .5rem;font-size:.68rem;font-weight:700;color:var(--dark)}
+.u-cell-start-mid-sm{display:flex;align-items:flex-end;min-height:2.4rem;padding:.5rem .5rem;font-size:.66rem;font-weight:600;color:var(--mid)}
+.u-dot-mid{width:18px;height:18px;border-radius:50%;background:var(--mid);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem}
+.u-dot-primary{width:18px;height:18px;border-radius:50%;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem}
+.u-dot-primary-sm{width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.58rem;flex-shrink:0}
+.u-flex-stretch{display:flex;align-items:stretch}
+.u-icon-primary-lg{color:var(--primary);font-size:1rem;line-height:1}
+.u-img-block{width:100%;height:auto;display:block;border-radius:4px;opacity:.92;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.u-kv-label{background:var(--primary);color:#fff;font-weight:700;padding:.25rem .5rem;border-radius:4px 0 0 4px;width:4.4rem;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.u-kv-value{border:1px solid var(--border);border-left:none;padding:.25rem .5rem;border-radius:0 4px 4px 0;flex:1;background:#fff;display:flex;align-items:center}
+.u-label-mid-sm{font-size:.68rem;color:var(--mid);min-width:3.6rem;flex-shrink:0}
+.u-meta-mid{font-size:.72rem;font-weight:600;color:var(--mid);display:flex;align-items:center;gap:.3rem;opacity:.6}
+.u-meta-primary-bold{font-size:.72rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:.3rem}
+.u-minh-355{min-height:355px}
+.u-minh-300{min-height:300px}
+.u-row-between-box{display:flex;justify-content:space-between;margin-bottom:.75rem;background:var(--light);padding:.5rem .75rem;border-radius:var(--r2);border:1px solid var(--border)}
+.u-td-bold{padding:.3rem .35rem;font-weight:700}
+.u-td-center{padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)}
+.u-text-mid{color:var(--mid)}
+.u-th-label{font-size:.7rem;font-weight:600;color:var(--dark);text-align:left}
+
+/* -- UTILITY CLASSES v2 (safe overrides, placed last for correct cascade) -- */
+.u-bold-primary{font-weight:700;color:var(--primary)}
+.u-ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.u-fs-75{font-size:.75rem}
+.u-fs-85{font-size:.85rem}
+.u-hide{display:none}
+.u-mb-15{margin-bottom:1.5rem}
+.u-pad-6-8{padding:.6rem .8rem}
+.u-text-primary{color:var(--primary)}
+.u2-02933a{justify-content:flex-start;padding:.75rem 1rem;font-size:.88rem}
+.u2-0bfa8f{padding:.4rem .65rem;font-size:.7rem;font-weight:700;color:var(--primary);background:var(--primary-pale);border-bottom:1px solid var(--border)}
+.u2-26b677{font-weight:700;margin-bottom:.4rem;display:flex;align-items:center;gap:.3rem}
+.u2-388e3b{display:flex;align-items:center;gap:.35rem;padding:.3rem .55rem;color:#fff;font-size:.58rem}
+.u2-5a4fb5{width:auto;height:auto;max-width:190px;margin:0 auto}
+.u2-70d50c{background:#fff;border-radius:8px;padding:.4rem .5rem;font-size:.6rem;color:var(--dark);line-height:2.8;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.u2-9c8841{display:flex;gap:.35rem;align-items:flex-start;margin-bottom:.55rem}
+.u2-bdff9c{width:30px;height:30px;font-size:.9rem;flex-shrink:0}
+.u2-e5f7ab{display:grid;grid-template-columns:.9fr 1.3fr .7fr .8fr .8fr;border-bottom:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#">
+      <div class="brand-icon"><i class="fa fa-cogs"></i></div>
+      <div>
+        <div class="brand-name">生單助理</div>
+        <div class="brand-sub">從「數位工具」到「數位勞動力」的提效進化</div>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <div class="nav-pills">
+        <a href="#s-intro" class="active" onclick="setNav(this)">認識生單助理</a>
+        <a href="#s-analysis" onclick="setNav(this)">AI 單據辨識</a>
+        <a href="#s-quote" onclick="setNav(this)">自動生單</a>
+        <a href="#s-features" onclick="setNav(this)">核心功能</a>
+        <a href="#s-scenarios" onclick="setNav(this)">應用情境</a>
+        <a href="#s-integration" onclick="setNav(this)">系統整合</a>
+        <a href="#s-stats" onclick="setNav(this)">效益數據</a>
+      </div>
+    </nav>
+    <button class="hamburger" id="hamburger"><i class="fa fa-bars"></i></button>
+  </div>
+</header>
+
+<section class="hero" id="s-intro">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">月底單據一口氣湧進來，還得靠加班才清得完？</div>
+      <h1 class="hero-h1">每張單據省下 <em>90% 打單工時</em><br>讓人力不再耗在重複打單</h1>
+      <p class="hero-lead">AI 生單助理自動讀懂採購單、發票、進貨單等各式單據，<br>從資料辨識、品號轉換到 ERP 生單，一路自動處理。</p>
+      <p class="hero-lead">人不用再一筆一筆輸入，只要專注在 AI 無法取代的判斷。</p>
+      <ul class="ig-list">
+        <li class="ig">
+          <div class="ig-icon">⏱</div>
+          <div>
+            <div class="ig-t">10 分鐘 → 1 分鐘</div>
+            <div class="ig-d">一張單據的製單時間大幅縮短，重複輸入交給 AI。</div>
+          </div>
+        </li>
+        <li class="ig">
+          <div class="ig-icon">⏳</div>
+          <div>
+            <div class="ig-t">月底 1,000+ 張單據也不怕</div>
+            <div class="ig-d">AI 分擔大量重複作業全天候處理，不因人力多寡而卡關，人員異動也不怕流程斷掉。</div>
+          </div>
+        </li>
+        <li class="ig">
+          <div class="ig-icon">🔗</div>
+          <div>
+            <div class="ig-t">辨識完成，直接接 ERP</div>
+            <div class="ig-d">不是「掃完就結束」，AI 辨識資料後可直接串接 ERP 生單，省下二次輸入。</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="hero-visual fade-in">
+
+      <div class="demo-container">
+        <div class="demo-header">
+          <span>· AI 單據辨識體驗 · 點「▶ 開始體驗」試試看</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-tabs">
+            <button class="demo-tab active" id="tabScenario1" onclick="switchScenario(1)">
+              <i class="fa fa-file-text-o"></i> 情境一：電子發票PDF
+            </button>
+            <button class="demo-tab" id="tabScenario2" onclick="switchScenario(2)">
+              <i class="fa fa-mobile" style="font-size:1.1rem"></i> 情境二：手機拍照上傳
+            </button>
+            <button class="demo-tab" id="tabScenario3" onclick="switchScenario(3)">
+              <i class="fa fa-envelope-o"></i> 情境三：郵件排程辨識
+            </button>
+          </div>
+
+          <div id="scenario1View" style="display:flex;flex-direction:column;margin-bottom:-.65rem">
+            <div id="s1IntroView" class="scenario-intro">
+              <div class="si-icon"><i class="fa fa-file-text-o"></i></div>
+              <h3>電子發票 PDF</h3>
+              <p>上傳電子發票 PDF，AI 自動辨識發票號碼、金額等關鍵欄位。</p>
+              <button class="dbtn ok" onclick="startScenario1FromIntro()">▶ 開始體驗</button>
+            </div>
+            <div class="u-hide" id="s1FlowView" style="flex-direction:column">
+            <div class="u-row-between-box">
+              <div class="u-meta-primary-bold" id="s1step1">
+                <span class="u-dot-primary">1</span> 選擇場景
+              </div>
+              <div class="u-meta-mid" id="s1step2">
+                <span class="u-dot-mid">2</span> 上傳檔案
+              </div>
+              <div class="u-meta-mid" id="s1step3">
+                <span class="u-dot-mid">3</span> 辨識結果
+              </div>
+            </div>
+
+            <div class="u-minh-355" id="s1ContentArea">
+              <div id="s1UploadView">
+                <div style="font-size:.68rem;color:var(--mid);font-weight:600;margin-bottom:.4rem">請先選擇場景再上傳檔案</div>
+                <div id="s1SceneCard" style="display:inline-flex;flex-direction:column;gap:.15rem;background:var(--primary);color:#fff;border-radius:var(--r2);padding:.5rem .65rem;margin-bottom:.65rem;min-width:150px;box-shadow:0 2px 8px rgba(30,136,229,.25)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
+                    <span style="font-size:.78rem;font-weight:700">00323</span>
+                    <span style="width:15px;height:15px;border-radius:3px;background:#fff;color:var(--primary);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem"><i class="fa fa-check"></i></span>
+                  </div>
+                  <div style="font-size:.66rem;line-height:1.3;opacity:.95">採購_採購發票錄入<br/>　</div>
+                </div>
+
+                <div id="s1Dropzone" onclick="uploadInvoiceFile()" style="cursor:pointer;border:1.5px dashed rgba(30,136,229,.35);border-radius:var(--r2);background:rgba(30,136,229,.02);padding:1rem .75rem;text-align:center;transition:all .05s">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto .4rem"><i class="fa fa-upload"></i></div>
+                  <div style="font-size:.74rem;font-weight:600;color:var(--dark)">點擊上傳或將文件拖曳至此區域</div>
+                  <div style="font-size:.65rem;color:var(--mid);margin-top:.2rem">(支援的格式有JPG、JPEG、PNG、PDF，單個檔案最多允許10MB)</div>
+                </div>
+
+                <div id="s1UploadedArea" style="display:none;margin-top:.65rem">
+                  <div style="display:flex;align-items:flex-start;gap:.6rem">
+                    <img id="s1ThumbImg" src="" alt="已上傳發票縮圖" style="width:90px;height:auto;border:1px solid var(--border);border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.08)"/>
+                    <div style="flex:1;font-size:.68rem;color:var(--mid)">
+                      <div style="font-weight:700;color:var(--dark);margin-bottom:.25rem"><i class="fa fa-file-pdf-o" style="color:#e05252"></i> 電子發票證明聯.pdf</div>
+                      <div>設定PDF檔案辨識範圍：
+                        <select style="font-size:.68rem;border:1px solid var(--border);border-radius:4px;padding:.1rem .3rem;color:var(--dark)">
+                          <option>全部</option>
+                          <option>僅第一頁</option>
+                        </select>
+                      </div>
+                      <label style="display:flex;align-items:center;gap:.3rem;margin-top:.35rem;cursor:pointer">
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="u-hide" id="s1ResultView">
+                <div class="dwg-stage">
+                  <div class="dwg-preview" id="dwgPreview">
+                    <div class="dwg-svg-wrap u2-5a4fb5">
+                      <img class="u-img-block" id="invoiceDemoImg" src="" alt="採購發票樣本"/>
+                    </div>
+                    <div class="ai-scan-line" id="dwgScanLine"></div>
+                    <div class="dwg-overlay" id="dwgOverlay">
+                      <div class="loading-dots"><span></span><span></span><span></span></div>
+                    </div>
+                  </div>
+                  <div class="ai-result-grid u-hide" id="aiResults">
+                    <div class="ar"><div class="ak">發票號碼</div><div class="av2">MF20334270</div></div>
+                    <div class="ar"><div class="ak">發票日期</div><div class="av2">2025/04/30</div></div>
+                    <div class="ar"><div class="ak">賣方名稱</div><div class="av2">新新科技</div></div>
+                    <div class="ar"><div class="ak">賣方統編</div><div class="av2">24771822</div></div>
+                    <div class="ar"><div class="ak">未稅金額</div><div class="av2">800</div></div>
+                    <div class="ar"><div class="ak">稅額</div><div class="av2">40</div></div>
+                    <div class="ar"><div class="ak">含稅金額</div><div class="av2">840</div></div>
+                    <div class="ar"><div class="ak" style="color:#10b981">AI 辨識率</div><div class="av2" style="color:#10b981;font-weight:700">98.2% ✅</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-btns">
+              <button class="dbtn" id="s1ResetBtn" onclick="resetInvoiceDemo()" disabled>↺ 重置</button>
+            </div>
+            </div>
+          </div>
+
+          <div class="u-hide" id="scenario2View">
+            <div id="s2IntroView" class="scenario-intro">
+              <div class="si-icon"><i class="fa fa-mobile" style="font-size:1.9rem"></i></div>
+              <h3>手機拍照上傳</h3>
+              <p>用手機打開生單助理拍照上傳單據，AI 立即辨識並帶出關鍵欄位資料。</p>
+              <button class="dbtn ok" onclick="startScenario2FromIntro()">▶ 開始體驗</button>
+            </div>
+            <div class="u-hide" id="s2FlowView">
+            <div class="u-row-between-box">
+              <div class="u-meta-primary-bold" id="s2step1">
+                <span class="u-dot-primary">1</span> 手機上打開生單助理
+              </div>
+              <div class="u-meta-mid" id="s2step2">
+                <span class="u-dot-mid">2</span> 拍照上傳
+              </div>
+              <div class="u-meta-mid" id="s2step3">
+                <span class="u-dot-mid">3</span> 辨識結果
+              </div>
+            </div>
+
+            <div class="u-minh-355" id="s2ContentArea">
+              <div id="s2ProcessView" style="display:flex;justify-content:center">
+                <div id="s2PhoneMock" style="width:260px;height:400px;flex-shrink:0;background:#eef1fb;border:6px solid #1a2233;border-radius:22px;padding:.6rem .65rem;box-shadow:0 10px 26px rgba(26,58,92,.22);position:relative;display:flex;flex-direction:column;overflow:hidden">
+                  <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding-bottom:.35rem;margin-bottom:.45rem;border-bottom:1px solid var(--border);font-size:.64rem;font-weight:700">
+                    <span style="color:var(--dark)"><i class="fa fa-bars u-text-primary"></i> <span class="u-text-primary">鼎新</span>｜生單助理</span>
+                  </div>
+
+                  <div id="s2ChatBody" style="flex:1;min-height:0;overflow-y:auto">
+                    <div id="s2Welcome">
+                      <div style="display:flex;gap:.35rem;align-items:flex-start;margin-bottom:.6rem">
+                        <div class="u-dot-primary-sm"><i class="fa fa-android"></i></div>
+                        <div class="u2-70d50c">您好，歡迎使用生單智慧小助手，我是您的生單智慧專家，隨時為您提供服務。</div>
+                      </div>
+                      <div style="font-size:.58rem;color:var(--mid);margin-bottom:.3rem">您可以這樣對我說</div>
+                      <div style="display:flex;flex-direction:column;gap:.3rem">
+                        <div id="s2QuickUpload" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:.45rem .5rem;font-size:.6rem;line-height:2.8;transition:all .3s">
+                          <div class="u-bold-primary">上傳文檔</div>
+                          <div class="u-text-mid">我要上傳檔案</div>
+                        </div>
+                        <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:.45rem .5rem;font-size:.6rem;line-height:2.8;opacity:.55">
+                          <div class="u-bold-primary">查看辨識記錄</div>
+                          <div class="u-text-mid">幫我打開辨識記錄</div>
+                        </div>
+                      </div>
+                      <div id="s2UserReplyUpload" style="display:none;justify-content:flex-end;margin-top:.45rem">
+                        <div style="background:var(--primary);color:#fff;border-radius:8px;padding:.3rem .55rem;font-size:.6rem;font-weight:600">上傳文檔</div>
+                      </div>
+                    </div>
+
+                    <div class="u-hide" id="s2SceneUpload">
+                      <div class="u2-9c8841">
+                        <div class="u-dot-primary-sm"><i class="fa fa-android"></i></div>
+                        <div style="background:#fff;border-radius:8px;padding:.4rem .5rem;font-size:.6rem;color:var(--dark);line-height:2.8;box-shadow:0 1px 4px rgba(0,0,0,.06)">您選擇的場景是採購發票</div>
+                      </div>
+                      <div style="background:var(--primary);color:#fff;text-align:center;border-radius:8px;padding:.5rem;font-size:.66rem;font-weight:700;line-height:1.8;margin:.4rem 0 .65rem">0010-採購發票</div>
+
+                      <div class="u-hide" id="s2UploadPrompt">
+                        <div class="u2-9c8841">
+                          <div class="u-dot-primary-sm"><i class="fa fa-android"></i></div>
+                          <div class="u2-70d50c">請上傳檔案，目前可支援的格式有JPG、JPEG、PNG以及PDF，每個檔案最多允許10MB</div>
+                        </div>
+
+                        <div id="s2ThumbWrap" style="display:none;position:relative;width:80px;margin-bottom:.6rem">
+                          <img id="s2ThumbImg" src="" alt="已上傳發票縮圖" style="width:100%;border-radius:6px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.08)"/>
+                        </div>
+
+                        <div id="s2Dropzone" style="position:relative;border:1.5px dashed rgba(30,136,229,.4);border-radius:8px;padding:.5rem;text-align:center;background:rgba(30,136,229,.02)">
+                          <div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto"><i class="fa fa-upload" style="font-size:.62rem"></i></div>
+                          <div id="s2ActionSheet" style="display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:150px;background:#2c2c2e;border-radius:10px;padding:.3rem 0;box-shadow:0 4px 14px rgba(0,0,0,.3);z-index:5">
+                            <div class="u2-388e3b"><i class="fa fa-image"></i> 照片圖庫</div>
+                            <div id="s2ActionCamera" style="display:flex;align-items:center;gap:.35rem;padding:.3rem .55rem;color:#fff;font-size:.58rem;border-radius:6px;transition:background .3s"><i class="fa fa-camera"></i> 拍照</div>
+                            <div class="u2-388e3b"><i class="fa fa-folder"></i> 選擇檔案</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="u-hide" id="s2ResultView" style="flex:1;min-height:0;overflow-y:auto;padding-top:.2rem">
+                    <div style="width:110px;height:81px;margin:0 auto .6rem;position:relative;overflow:hidden;border-radius:6px">
+                      <img class="u-img-block" id="s2ResultImg" src="" alt="手機拍攝發票" style="width:100%;height:100%;object-fit:cover;border-radius:6px;box-shadow:0 4px 12px rgba(26,58,92,.18)"/>
+                      <div class="ai-scan-line" id="mobileScanLine"></div>
+                      <div class="dwg-overlay" id="mobileOverlay" style="border-radius:6px">
+                        <div class="loading-dots"><span></span><span></span><span></span></div>
+                      </div>
+                    </div>
+
+                    <div class="u-hide" id="s2ResultMsgs">
+                      <div class="u2-9c8841">
+                        <div class="u-dot-primary-sm"><i class="fa fa-android"></i></div>
+                        <div class="u2-70d50c">已上傳 1 個檔案，成功辨識 1 個，失敗 0 個</div>
+                      </div>
+                      <div class="u2-9c8841">
+                        <div class="u-dot-primary-sm"><i class="fa fa-android"></i></div>
+                        <div class="u2-70d50c">您好，請問還需要我為您服務什麼？</div>
+                      </div>
+                      <div style="font-size:.58rem;color:var(--mid);margin-bottom:.3rem">您可以這樣對我說</div>
+                      <div style="display:flex;flex-direction:column;gap:.3rem">
+                        <div class="s2-chip"><div class="u-bold-primary">上傳文檔</div><div class="u-text-mid">我要上傳檔案</div></div>
+                        <div class="s2-chip" id="s2ChipViewReco" onclick="showS2Reco()"><div class="u-bold-primary">查看辨識記錄</div><div class="u-text-mid">幫我打開辨識記錄</div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="u-hide" id="s2RecoView" style="flex:1;min-height:0;overflow-y:auto;padding-top:.2rem">
+                    <div class="s2-reco-bc">工作台 <span>/</span> <b>辨識記錄</b></div>
+                    <div class="s2-reco-filters">
+                      <div class="s2-reco-frow"><span class="s2-reco-flbl">檔案名稱</span><input class="s2-reco-finput" placeholder="請輸入檔案名稱" disabled></div>
+                      <div class="s2-reco-frow"><span class="s2-reco-flbl">場景名稱</span><input class="s2-reco-finput" placeholder="請輸入場景名稱" disabled></div>
+                      <div class="s2-reco-frow"><span class="s2-reco-flbl">狀態</span><input class="s2-reco-finput" placeholder="全部" disabled></div>
+                    </div>
+                    <div class="s2-reco-card">
+                      <div class="s2-reco-kv"><span class="k">檔案名稱</span><span class="v">image</span></div>
+                      <div class="s2-reco-kv"><span class="k">場景名稱</span><span class="v">採購發票</span></div>
+                      <div class="s2-reco-kv"><span class="k">摘要欄位</span><span class="v">發票號碼: AB88920154；發票日期: 2026/05/12；賣方統編: 80123456；未稅金額: 1200</span></div>
+                      <div class="s2-reco-kv"><span class="k">上傳時間</span><span class="v" id="s2RecoTime">2026/08/21 15:26:05</span></div>
+                      <div class="s2-reco-kv"><span class="k">狀態</span><span class="v">待校驗</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-btns">
+              <button class="dbtn" id="s2ResetBtn" onclick="resetScenario2AndIntro()" disabled>↺ 重置</button>
+            </div>
+            </div>
+          </div>
+
+          <div class="u-hide" id="scenario3View">
+            <div id="s3IntroView" class="scenario-intro" style="min-height:300px">
+              <div class="si-icon"><i class="fa fa-envelope-o"></i></div>
+              <h3>郵件排程辨識</h3>
+              <p>系統依排程自動讀取信箱中的客戶訂單郵件，AI 自動辨識並生成訂單資料。</p>
+              <button class="dbtn ok" onclick="startScenario3FromIntro()">▶ 開始體驗</button>
+            </div>
+            <div class="u-hide" id="s3FlowView">
+            <div class="u-row-between-box">
+              <div class="u-meta-primary-bold" id="s3step1">
+                <span class="u-dot-primary">1</span> 從郵件信箱收到客戶訂單
+              </div>
+              <div class="u-meta-mid" id="s3step2">
+                <span class="u-dot-mid">2</span> 依排程設定自動讀取郵件
+              </div>
+              <div class="u-meta-mid" id="s3step3">
+                <span class="u-dot-mid">3</span> 訂單辨識結果
+              </div>
+            </div>
+
+            <div class="u-minh-300" id="s3ContentArea">
+              <div id="s3ProcessView">
+                <div id="s3MailboxView">
+                  <div id="emailBox" style="position:relative;width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:.5rem;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+                    <div id="emailHeaderBar" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:.35rem;margin-bottom:.4rem;font-size:.68rem">
+                      <span style="font-weight:700;color:var(--dark)"><i class="fa fa-envelope u-text-primary"></i> 郵件信箱</span>
+                      <span id="emailStatusBadge" style="background:var(--primary-pale);color:var(--primary);padding:1px 6px;border-radius:4px;font-size:.6rem;font-weight:600">已接收郵件</span>
+                    </div>
+                    <div class="dwg-svg-wrap" style="width:auto;height:auto;max-width:250px;margin:0 auto">
+                      <img id="emailBodyImgSmall" src="" alt="客戶訂購郵件內文" style="width:100%;height:auto;display:block;border-radius:4px;box-shadow:0 1px 6px rgba(0,0,0,.08)"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="u-hide" id="s3ScheduleView">
+                  <div id="s3ScheduleSettings" style="font-size:.6rem;color:var(--dark);background:#fff;border:1px solid var(--border);border-radius:6px;padding:.5rem .6rem">
+                    <div class="u2-26b677"><i class="fa fa-cog u-text-primary"></i> 郵件及排程設定</div>
+                    <div style="display:grid;grid-template-columns:auto 1fr;gap:.22rem .5rem;margin-bottom:.5rem">
+                      <div class="u-text-mid">郵件地址</div><div>gfa@gmail.com <i class="fa fa-check-circle" style="color:#10b981"></i> SSL</div>
+                      <div class="u-text-mid">預處理設置</div><div>是</div>
+                      <div class="u-text-mid">啟用排程</div><div style="color:#10b981;font-weight:700">已啟用</div>
+                      <div class="u-text-mid">剖析頻次</div><div>每月 1號 00:00</div>
+                    </div>
+                    <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:.56rem">
+                      <div style="display:grid;grid-template-columns:1fr 1.5fr 1fr;background:var(--light);font-weight:700;padding:.25rem .4rem">
+                        <div>帳號目錄</div><div>預處理場景</div><div>歸屬人員</div>
+                      </div>
+                      <div style="display:grid;grid-template-columns:1fr 1.5fr 1fr;padding:.25rem .4rem">
+                        <div>Order</div><div>客戶採購轉訂單</div><div>Data</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="s3ArrowDown" style="display:none;text-align:center;margin:.4rem 0">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--primary);color:#fff;border-radius:6px;font-size:.7rem"><i class="fa fa-arrow-down"></i></span>
+                  </div>
+
+                  <div id="s3InboxRecords" style="display:none;font-size:.6rem;color:var(--dark)">
+                    <div class="u2-26b677"><i class="fa fa-inbox u-text-primary"></i> 收件記錄</div>
+                    <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+                      <div style="display:grid;grid-template-columns:1.2fr 1.6fr .9fr;background:var(--light);font-weight:700;padding:.25rem .35rem;font-size:.55rem">
+                        <div>收件時間</div><div>主旨</div><div>狀態</div>
+                      </div>
+                      <div id="s3InboxNewRow" style="display:grid;grid-template-columns:1.2fr 1.6fr .9fr;padding:.3rem .35rem;background:var(--primary-pale);font-size:.55rem;align-items:center">
+                        <div>2025/02/10 09:15</div>
+                        <div class="u-ellipsis">【訂購單】20250210_採購…</div>
+                        <div id="s3InboxStatus" style="color:#D97706;font-weight:700">處理中</div>
+                      </div>
+                      <div style="display:grid;grid-template-columns:1.2fr 1.6fr .9fr;padding:.3rem .35rem;font-size:.55rem;color:var(--mid);opacity:.7">
+                        <div>2025/01/06 09:33</div>
+                        <div class="u-ellipsis">成功科技採購單…</div>
+                        <div style="color:#059669">已拋轉</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="u-hide" id="s3ResultView">
+                <div class="dwg-stage">
+                  <div class="dwg-preview" id="s3ResultPreview">
+                    <div class="dwg-svg-wrap u2-5a4fb5">
+                      <img class="u-img-block" id="emailBodyImgLarge" src="" alt="客戶訂購郵件內文"/>
+                    </div>
+                    <div class="ai-scan-line" id="emailScanLine"></div>
+                    <div class="dwg-overlay" id="emailOverlay">
+                      <div class="loading-dots"><span></span><span></span><span></span></div>
+                    </div>
+                  </div>
+                  <div class="ai-result-grid u-hide" id="s3AiResults">
+                    <div class="ar"><div class="ak">採購單號</div><div class="av2">CT3-CGD-202502100001</div></div>
+                    <div class="ar"><div class="ak">採購日期</div><div class="av2">2025/02/10</div></div>
+                    <div class="ar"><div class="ak">客戶名稱</div><div class="av2">成功科技</div></div>
+                    <div class="ar"><div class="ak">交貨地址</div><div class="av2">澳大利亞</div></div>
+                    <div class="ar"><div class="ak">訂購品項</div><div class="av2">奶茶飲料、自行車 等2項</div></div>
+                    <div class="ar"><div class="ak">排程狀態</div><div class="av2" style="color:var(--primary);font-weight:700">自動讀取成功</div></div>
+                    <div class="ar"><div class="ak">總計金額</div><div class="av2">1020</div></div>
+                    <div class="ar"><div class="ak" style="color:#10b981">AI 辨識率</div><div class="av2" style="color:#10b981;font-weight:700">98.1% ✅</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-btns">
+              <button class="dbtn" id="s3ResetBtn" onclick="resetScenario3AndIntro()" disabled>↺ 重置</button>
+            </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s-analysis">
+  <div class="section-inner">
+    <div class="two-col" style="align-items:start">
+      <div class="fade-in">
+        <div class="section-eyebrow">AI 單據辨識</div>
+        <h2 class="section-h2">不是掃描文字，<br>是讀懂一張單據在說什麼</h2>
+        <p class="section-lead">透過口語化設計場景，自動識別發票、採購單、進貨單等多種格式的關鍵欄位，並自動轉換客戶名稱與品號等關鍵資訊，協助企業節省高達 90% 的打單工時。。</p>
+        <ul class="ig-list" style="margin-bottom:0">
+          <li class="ig">
+            <div class="ig-icon">🔍</div>
+            <div>
+              <div class="ig-t">客戶資料自動對應，減少手動查找</div>
+              <div class="ig-d">憑證名稱／品號與 ERP 資料不一致也沒問題，事先設定對應關係，生單時自動帶出正確的客戶資料與品號，降低輸入錯誤。</div>
+            </div>
+          </li>
+          <li class="ig">
+            <div class="ig-icon">🎯</div>
+            <div>
+              <div class="ig-t">人力轉向更有價值的工作</div>
+              <div class="ig-d">重複輸入交給 AI 處理，同仁把時間留給例外狀況判斷、供應商溝通與流程優化。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="fade-in">
+        <div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem">
+          <div class="feat-card">
+            <div class="feat-icon">📸</div>
+            <h3>掃描 / 拍照即可上傳</h3>
+            <p>支援手機拍照、電子發票附件直接拖曳上傳，多張發票可同時批次處理。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🤖</div>
+            <h3>AI 自動辨識欄位</h3>
+            <p>自動識別發票號碼、日期、賣方統編、未稅金額、稅額等，準確率 97%+。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">✅</div>
+            <h3>人工快速校驗確認</h3>
+            <p>原始文件與 AI 辨識結果並列對比，欄位可如 Excel 般直接點擊修改。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🚀</div>
+            <h3>一鍵生成 ERP 訂單</h3>
+            <p>透過 API 直接對接 ERP 自動建立對應的單據，全程免切換系統。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="s-quote">
+  <div class="section-inner">
+    <div class="section-eyebrow" style="margin-bottom:.35rem;justify-content:center">自動生單流程</div>
+    <style>#s-quote .section-eyebrow::before{display:none}</style>
+    <h2 class="section-h2" style="text-align:center;margin-bottom:.4rem">從一張單據開始，生單全程自動化</h2>
+    <p class="section-lead" style="text-align:center;margin:0 auto 1.5rem;max-width:660px">
+      上傳單據 → AI 辨識 → 自動比對 → ERP 生單，重複性工作交給 AI，生單更快、更準。
+    </p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+
+      <div class="demo-container">
+        <div class="demo-header"><span>📋 自動生單流程體驗 · 點「▶ 啟動流程」試試看</span></div>
+        <div class="demo-body">
+
+          <div class="dwg-stage" style="margin-bottom:.65rem">
+            <div id="q-file-row" style="display:flex;align-items:center;gap:.55rem;padding:.1rem 0 .45rem">
+              <div style="width:28px;height:28px;background:var(--primary-pale);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem">📄</div>
+              <div style="flex:1;min-width:0">
+                <div id="q-fname" style="font-size:.72rem;font-weight:600;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">尚未上傳單據</div>
+                <div style="height:3px;background:var(--border);border-radius:2px;margin-top:.28rem;overflow:hidden">
+                  <div id="q-upfill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:2px;transition:width .08s linear"></div>
+                </div>
+              </div>
+              <div id="q-updone" style="font-size:.82rem;display:none">✅</div>
+            </div>
+
+            <div id="q-img-wrap" style="display:none;border-radius:6px;overflow:hidden;border:1px solid var(--border);position:relative;max-width:62%;margin:0 auto">
+              <img id="q-po-img" src="" alt="採購單樣本" style="width:100%;height:auto;display:block;opacity:.88"/>
+              <div id="q-scan-line" style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);top:0;opacity:0"></div>
+            </div>
+          </div>
+
+          <div class="quote-steps" style="gap:.32rem">
+            <div class="qs" id="qs0"><div class="qs-icon">📤</div><div class="qs-bar"><div class="qs-label">上傳單據 PDF / 圖片</div><div class="qs-prog"><div class="qs-fill" id="qs0fill"></div></div></div></div>
+            <div class="qs" id="qs1"><div class="qs-icon">🔍</div><div class="qs-bar"><div class="qs-label">AI 辨識統編、金額、品項欄位</div><div class="qs-prog"><div class="qs-fill" id="qs1fill"></div></div></div></div>
+            <div class="qs" id="qs2"><div class="qs-icon">🔄</div><div class="qs-bar"><div class="qs-label">比對客戶與品號對應資料</div><div class="qs-prog"><div class="qs-fill" id="qs2fill"></div></div></div></div>
+            <div class="qs" id="qs3"><div class="qs-icon">📋</div><div class="qs-bar"><div class="qs-label">自動生成 ERP 單據草稿</div><div class="qs-prog"><div class="qs-fill" id="qs3fill"></div></div></div></div>
+          </div>
+
+          <div class="demo-btns" style="margin-top:.55rem">
+            <button class="dbtn" onclick="runQuote()">▶ 啟動流程</button>
+            <button class="dbtn" onclick="resetQuote()">↺ 重置</button>
+            <button class="dbtn ok u-hide" id="quoteConfirmBtn" onclick="showQuoteResult()">查看生單結果 →</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div>
+        <ul class="ig-list" style="margin-bottom:1rem">
+          <li class="ig u-pad-6-8">
+            <div class="ig-icon u2-bdff9c">📤</div>
+            <div><div class="ig-t u-fs-85">單據直接上傳</div><div class="ig-d u-fs-75">PDF、掃描檔、手機照片、郵件資料都能直接處理，收到就能開始。</div></div>
+          </li>
+          <li class="ig u-pad-6-8">
+            <div class="ig-icon u2-bdff9c">🤖</div>
+            <div><div class="ig-t u-fs-85">AI 自動讀懂</div><div class="ig-d u-fs-75">自動抓取客戶、品號、數量、金額等關鍵欄位，不再逐筆輸入。</div></div>
+          </li>
+          <li class="ig u-pad-6-8">
+            <div class="ig-icon u2-bdff9c">🔗</div>
+            <div><div class="ig-t u-fs-85">資料自動比對，直接完成生單</div><div class="ig-d u-fs-75">自動套用客戶與品號對應資料，帶入 ERP 正確資訊，確認後即可一鍵生成ERP單據。</div></div>
+          </li>
+        </ul>
+
+        <div id="quoteResult" style="display:none;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-md)">
+
+            <div style="background:var(--primary);color:#fff;padding:.65rem .85rem;font-size:.74rem;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+              <span>📋 AI 智能生單結果</span>
+              <span style="opacity:.75;font-weight:400;font-size:.68rem">採購單 PO-20260417</span>
+            </div>
+
+            <div class="u2-0bfa8f">🧾 單頭資料</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:#fafbfc">
+                <span class="u-label-mid-sm">客戶名稱</span>
+                <span class="u-th-label">大昌五金有限公司</span>
+              </div>
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem;border-bottom:1px solid var(--border);background:#fafbfc">
+                <span class="u-label-mid-sm">統一編號</span>
+                <span class="u-th-label">24771822</span>
+              </div>
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+                <span class="u-label-mid-sm">單號</span>
+                <span class="u-th-label">PO-20260417</span>
+              </div>
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem;border-bottom:1px solid var(--border)">
+                <span class="u-label-mid-sm">單據日期</span>
+                <span class="u-th-label">2026/04/17</span>
+              </div>
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem;border-right:1px solid var(--border)">
+                <span class="u-label-mid-sm">預交日</span>
+                <span class="u-th-label">2026/04/24</span>
+              </div>
+              <div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:.5rem;min-height:2.6rem;padding:.55rem .65rem">
+                <span class="u-label-mid-sm">幣別</span>
+                <span class="u-th-label">TWD</span>
+              </div>
+            </div>
+
+            <div class="u2-0bfa8f">📦 品項明細</div>
+            <div style="display:grid;grid-template-columns:.9fr 1.3fr .7fr .8fr .8fr;background:var(--light);border-bottom:1px solid var(--border)">
+              <div class="u-cell-start-mid-sm">料號</div>
+              <div class="u-cell-start-mid-sm">品名</div>
+              <div class="u-cell-start-mid-sm">數量</div>
+              <div class="u-cell-start-mid-sm">單價</div>
+              <div style="display:flex;align-items:flex-end;justify-content:flex-end;min-height:2.4rem;padding:.5rem .5rem;font-size:.66rem;font-weight:600;color:var(--mid)">金額</div>
+            </div>
+            <div class="u2-e5f7ab">
+              <div class="u-cell-start-dark">A1023</div>
+              <div class="u-cell-start-dark-bold">六角螺栓 M6x20</div>
+              <div class="u-cell-start-dark">500</div>
+              <div class="u-cell-start-dark">3.5</div>
+              <div class="u-cell-end-dark">1,750</div>
+            </div>
+            <div style="display:grid;grid-template-columns:.9fr 1.3fr .7fr .8fr .8fr;border-bottom:1px solid var(--border);background:#fafbfc">
+              <div class="u-cell-start-dark">A1088</div>
+              <div class="u-cell-start-dark-bold">平墊圈</div>
+              <div class="u-cell-start-dark">500</div>
+              <div class="u-cell-start-dark">0.8</div>
+              <div class="u-cell-end-dark">400</div>
+            </div>
+            <div class="u2-e5f7ab">
+              <div class="u-cell-start-dark">B2210</div>
+              <div class="u-cell-start-dark-bold">壓縮彈簧</div>
+              <div class="u-cell-start-dark">200</div>
+              <div class="u-cell-start-dark">5.2</div>
+              <div class="u-cell-end-dark">1,040</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1.6fr auto;background:var(--primary-pale);border-bottom:1px solid var(--border)">
+              <div style="padding:.4rem .65rem;font-size:.7rem;font-weight:700;color:var(--primary)">✨ AI 資料比對</div>
+              <div></div><div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1.6fr auto;border-bottom:1px solid var(--border);background:#fafbfc">
+              <div style="display:flex;align-items:flex-end;min-height:2.4rem;padding:.45rem .65rem .45rem 1.1rem;font-size:.7rem;color:var(--dark)">品號比對</div>
+              <div style="display:flex;align-items:flex-end;min-height:2.4rem;padding:.45rem .5rem;font-size:.68rem;color:var(--mid)">AI 自動對應ERP品號對照表，3 筆全數命中</div>
+              <div style="display:flex;align-items:flex-end;justify-content:flex-end;min-height:2.4rem;padding:.45rem .75rem;font-size:.7rem;font-weight:600;color:var(--dark);white-space:nowrap">100%</div>
+            </div>
+
+            <div style="padding:.7rem .85rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#EFF6FF,#F0F9FF)">
+              <div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:1.05rem;font-weight:800;color:var(--primary)">✅ 一鍵生成ERP採購單</div>
+                <div style="font-size:.63rem;color:var(--mid)">單號: 2201-11404280004</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s-features">
+  <div class="section-inner">
+    <div class="text-center-header fade-in u-mb-15">
+      <div class="section-eyebrow">AI 越用越懂你</div>
+      <h2 class="section-h2">越用越聰明的 AI 生單助理</h2>
+      <p class="section-lead">每次修正，AI 都會記住；下次遇到，直接精準套用。</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:250px 1fr;gap:1.5rem;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:.5rem;position:sticky;top:80px">
+        <button class="fc u2-02933a" onclick="pickFeat('correction',this)">
+          <span class="fi">🗂️</span>一次校正，後續自動套用
+        </button>
+        <button class="fc u2-02933a" onclick="pickFeat('compare',this)">
+          <span class="fi">🔄</span>自動比對，異動即時抓出
+        </button>
+        <button class="fc u2-02933a" onclick="pickFeat('scenario',this)">
+          <span class="fi">💬</span>口語描述，設計專屬場景
+        </button>
+        <button class="fc u2-02933a" onclick="pickFeat('extract',this)">
+          <span class="fi">🏷️</span>口語設定， AI 自動擷取
+        </button>
+        <p style="font-size:.72rem;color:var(--mid);margin-top:.5rem;padding:0 .25rem;line-height:1.6">↑ 點選功能查看說明</p>
+      </div>
+
+      <div id="fcDet" style="background:var(--light);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:350px;display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;padding:2rem;color:var(--mid)">
+          <div style="font-size:2.5rem;margin-bottom:.75rem">👈</div>
+          <div style="font-size:.9rem">選一項，看看 AI 實際怎麼運作</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="s-scenarios">
+  <div class="section-inner">
+    <div class="text-center-header fade-in u-mb-15">
+      <div class="section-eyebrow">應用情境</div>
+      <h2 class="section-h2">情境不同，AI 都能自動處理</h2>
+      <p class="section-lead">不管單據從哪裡來、長什麼樣子，生單助理都貼合你每天實際遇到的場景：</p>
+    </div>
+    <div class="card-grid-4 fade-in">
+      <div class="scen-card">
+        <div class="scen-icon">🌏</div>
+        <h3>跨國訂單識別</h3>
+        <p class="scen-quote">「國外訂單一起湧入，日期、數值格式與計量單位換算通通不同，AI 一樣自動辨識欄位、換算單位，輕鬆完成跨國打單。」</p>
+      </div>
+      <div class="scen-card">
+        <div class="scen-icon">📁</div>
+        <h3>資料夾上傳 × 自動排程生單</h3>
+        <p class="scen-quote">「採購單圖片、PDF 統一丟進共享資料夾，不用再一筆筆手動上傳，AI 自動排程掃描、批次生單。」</p>
+      </div>
+      <div class="scen-card">
+        <div class="scen-icon">🧾</div>
+        <h3>採購驗收 × 自動對帳生單</h3>
+        <p class="scen-quote">「廠商發票送來，採購單、驗收單、發票三份文件要逐一核對金額才能開立應付憑單，每次對帳都耗掉半天。讓 AI 自動比對、一鍵開單。」</p>
+      </div>
+      <div class="scen-card">
+        <div class="scen-icon">⏱️</div>
+        <h3>重複登打，大幅減量</h3>
+        <p class="scen-quote">「以前一忙起來就整天埋頭打單，現在辨識、比對、生單全交給 AI，只要處理少數例外就好。」</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="s-integration">
+  <div class="section-inner">
+    <div class="integ-two-col" style="align-items:stretch">
+      <div class="fade-in">
+        <div class="section-eyebrow">系統整合 / ERP</div>
+        <h2 class="section-h2">直接接進你<br>
+已經在用的 ERP</h2>
+        <p class="section-lead">換系統最怕 IT 重建、使用者重學。生單助理整合鼎新  ERP，各式單據辨識完就直接串接你現有的採購與請款流程：</p>
+        <div class="integ-list">
+          <div class="ig">
+            <div class="ig-icon"><i class="fa fa-database u-text-primary"></i></div>
+            <div>
+              <div class="ig-t">ERP 系統整合</div>
+              <div class="ig-d">各類單據（採購單、發票、驗收單等）辨識結果可直接回寫進貨單、應付憑單，一鍵生單免登打，不用砍掉重練整條採購流程。</div>
+            </div>
+          </div>
+          <div class="ig">
+            <div class="ig-icon"><i class="fa fa-camera u-text-primary"></i></div>
+            <div>
+              <div class="ig-t">多元上傳來源</div>
+              <div class="ig-d">手機拍照、掃描器、Email 夾檔皆可直接上傳，PDF、JPG 格式免轉檔，減少上傳流程卡關的機會。</div>
+            </div>
+          </div>
+          <div class="ig">
+            <div class="ig-icon"><i class="fa fa-code u-text-primary"></i></div>
+            <div>
+              <div class="ig-t">企業自有系統 API</div>
+              <div class="ig-d">提供完整 REST API，可依企業現有採購、請款流程客製整合，無需大改現有架構。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-in" style="height:100%">
+        <div style="height:100%;box-sizing:border-box;background:linear-gradient(135deg,var(--primary-pale),#EFF6FF);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem 1.4rem;display:flex;flex-direction:column">
+          <div style="font-weight:700;color:var(--dark);font-size:1rem;text-align:center;margin-bottom:.3rem">各式單據，全自動接軌 ERP</div>
+          <div style="font-size:.74rem;color:var(--mid);text-align:center;margin-bottom:.6rem;line-height:1.6">免除人工登打、品號比對轉換、逐筆核對三大耗時環節</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:.6rem">
+            <div class="u-badge-box">
+              📥 單據電子檔自動讀取
+              <div style="font-weight:400;font-size:.66rem;color:var(--mid);margin-top:.15rem">PDF／掃描／拍照／Email 附件皆可</div>
+            </div>
+            <div class="u-icon-primary-lg">⬇</div>
+            <div class="u-badge-box">🔍 AI 自動解析單據內容</div>
+            <div class="u-icon-primary-lg">⬇</div>
+            <div class="u-badge-box">🔄 AI 自動比對／轉換品號</div>
+            <div class="u-icon-primary-lg">⬇</div>
+            <div style="width:100%;max-width:300px;background:var(--primary);color:#fff;border-radius:var(--r2);padding:.5rem .7rem;text-align:center;font-size:.78rem;font-weight:700">🔌 呼叫 ERP API 自動生成單據</div>
+          </div>
+          <div style="display:flex;justify-content:center;gap:1.1rem;margin-top:.9rem;font-size:.68rem;color:var(--mid)">
+            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid var(--primary);margin-right:.3rem;vertical-align:middle"></span>AI 處理</span>
+            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--primary);margin-right:.3rem;vertical-align:middle"></span>ERP API 處理</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="s-stats">
+  <div class="section-inner">
+    <div class="text-center-header fade-in">
+      <div class="section-eyebrow">效益數據</div>
+      <h2 class="section-h2">用了之後，效益看得見</h2>
+      <p class="section-lead">鼎新生單助理已在採購、財務、業務等部門驗證，以下是關鍵成果：</p>
+    </div>
+    <div class="stat-grid fade-in">
+      <div class="sp">
+        <span class="n">90%↑</span>
+        <span class="l">縮短工作時間</span>
+      </div>
+      <div class="sp">
+        <span class="n">97%+</span>
+        <span class="l">單據辨識準確率</span>
+      </div>
+      <div class="sp">
+        <span class="n">零代碼</span>
+        <span class="l">自然語言場景設計</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s-solutions">
+  <div class="section-inner">
+    <div class="text-center-header fade-in">
+      <div class="section-eyebrow">核心產品與技術解決方案</div>
+      <h2 class="section-h2">用科技，讓專業發揮更大價值</h2>
+      <p class="section-lead">探索我們正在打造的產品與技術服務。</p>
+    </div>
+    <div class="solution-grid fade-in">
+      <a class="solution-card" href="https://courses.taiwanmds.com/product/information?p=02c0c7b9ec7b11f0b3480242ac110002" target="_blank" rel="noopener noreferrer">
+        <div class="solution-icon"><i class="fa fa-github"></i></div>
+        <div class="solution-title">Vibe Coding：行銷數據分析學習圈</div>
+        <div class="solution-desc">訂閱Vibe Coding行銷數據分析學習圈，跟著我們一同走入行銷數據分析與vibe coding自動化的世界</div>
+        <div class="solution-link">了解更多 <i class="fa fa-arrow-right"></i></div>
+      </a>
+      <a class="solution-card" href="https://judgai.com/" target="_blank" rel="noopener noreferrer">
+        <div class="solution-icon"><i class="fa fa-shield"></i></div>
+        <div class="solution-title">保險機器人：當經驗成為奇點，AI更是保險未來的引擎</div>
+        <div class="solution-desc">從經驗、法條到正確說明，奇點讓每位保險專業者擁有一位懂法的科技夥伴。</div>
+        <div class="solution-link">了解更多 <i class="fa fa-arrow-right"></i></div>
+      </a>
+      <a class="solution-card" href="https://judgai.com/saymind" target="_blank" rel="noopener noreferrer">
+        <div class="solution-icon"><i class="fa fa-microphone"></i></div>
+        <div class="solution-title">SayMind：一站式語音轉錄，AI 筆記整理，自動口條訓練</div>
+        <div class="solution-desc">使用 LangChain 搭建的 RAG 系統，可上傳 PDF 並進行精準問答。</div>
+        <div class="solution-link">了解更多 <i class="fa fa-arrow-right"></i></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="s-contact">
+  <div class="section-inner">
+    <div class="text-center-header fade-in">
+      <div class="section-eyebrow">Contact Me</div>
+      <h2 class="section-h2">聯絡我</h2>
+      <p class="section-lead">歡迎透過社群與我交流，或填寫需求表單讓我了解你的想法。</p>
+    </div>
+    <div class="contact-panel fade-in">
+      <div class="contact-box">
+        <h3>多元社群，找到我</h3>
+        <p>追蹤最新作品、技術分享與產品消息。</p>
+        <div class="social-links">
+          <a class="social-link" href="#" aria-label="LINE"><i class="fa fa-comment"></i> LINE</a>
+          <a class="social-link" href="#" aria-label="Facebook"><i class="fa fa-facebook"></i> Facebook</a>
+          <a class="social-link" href="#" aria-label="LinkedIn"><i class="fa fa-linkedin"></i> LinkedIn</a>
+          <a class="social-link" href="#" aria-label="GitHub"><i class="fa fa-github"></i> GitHub</a>
+        </div>
+      </div>
+      <div class="contact-box">
+        <h3>填寫需求表單</h3>
+        <p>請簡單描述你的需求與期待，我會依內容與你聯繫。</p>
+        <a class="contact-cta" href="https://forms.gle/mCDu2BFK6DuZKxvF6" target="_blank" rel="noopener noreferrer">
+          <i class="fa fa-pencil-square-o"></i> 開啟 Google Form
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="float-top">
+  <button class="float-top-btn" id="backToTop"><i class="fa fa-arrow-up"></i></button>
+</div>
+
+
+<script>
+function setNav(el){
+  document.querySelectorAll('.nav-pills a').forEach(a=>a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function syncHeaderOffset(){
+  const h = document.querySelector('.site-header');
+  if(h) document.documentElement.style.setProperty('--header-h', (h.offsetHeight + 8) + 'px');
+}
+syncHeaderOffset();
+window.addEventListener('resize', syncHeaderOffset);
+window.addEventListener('load', syncHeaderOffset);
+
+const sections = ['s-intro','s-analysis','s-quote','s-features','s-scenarios','s-integration','s-stats'];
+window.addEventListener('scroll',()=>{
+  let cur='s-intro';
+  sections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top < 100) cur=id;
+  });
+  document.querySelectorAll('.nav-pills a').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href')==='#'+cur);
+  });
+});
+
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.08});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+document.getElementById('backToTop').addEventListener('click',()=>{
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+
+function generateInvoiceDemoImage(){
+  const W=340,H=432;
+  const canvas=document.createElement('canvas');
+  const SCALE=Math.max(3,(window.devicePixelRatio||1)*2);
+  canvas.width=W*SCALE; canvas.height=H*SCALE;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+  ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#d8d8d8'; ctx.lineWidth=2;
+  ctx.strokeRect(4,4,W-8,H-8);
+  ctx.fillStyle='#111'; ctx.textAlign='center';
+  ctx.font='15px "Noto Sans TC",sans-serif';
+  ctx.fillText('電子發票證明聯',W/2,36);
+  ctx.font='bold 22px "Noto Sans TC",sans-serif';
+  ctx.fillText('114年03-04月',W/2,66);
+  ctx.font='bold 20px "Noto Sans TC",sans-serif';
+  ctx.fillText('MF 20334270',W/2,96);
+  ctx.textAlign='left'; ctx.font='11px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  ctx.fillText('隨機碼：0455　　總計：840',24,120);
+  ctx.fillText('賣方：24771822　買方：28682266',24,138);
+  for(let i=0;i<280;i+=3){ ctx.fillRect(24+i,155,1.4,44); }
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#bbb';
+  ctx.beginPath(); ctx.moveTo(10,210); ctx.lineTo(W-10,210); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='bold 13px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.textAlign='left';
+  ctx.fillText('新新科技',24,234);
+  ctx.font='12px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  ctx.fillText('電腦周邊',24,272);
+  ctx.textAlign='right';
+  ctx.fillText('1',210,272); ctx.fillText('840',300,272);
+  ctx.textAlign='left'; ctx.font='11px "Noto Sans TC",sans-serif'; ctx.fillStyle='#666';
+  ctx.fillText('總備註：得抵扣之進貨及費用',24,296);
+  ctx.font='14px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.fillText('銷售額(應稅)',24,330); ctx.textAlign='right'; ctx.fillText('800',310,330);
+  ctx.textAlign='left'; ctx.fillText('稅額',24,354); ctx.textAlign='right'; ctx.fillText('40',310,354);
+  ctx.font='bold 16px "Noto Sans TC",sans-serif'; ctx.textAlign='left'; ctx.fillText('總計',24,384);
+  ctx.textAlign='right'; ctx.fillText('840',310,384);
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle='#d8d8d8'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(10,406); ctx.lineTo(W-10,406); ctx.stroke();
+  ctx.font='10px "Noto Sans TC",sans-serif'; ctx.fillStyle='#999'; ctx.textAlign='center';
+  ctx.fillText('感謝您的惠顧',W/2,422);
+  return canvas.toDataURL('image/png');
+}
+
+function generateMobileInvoiceImage(){
+  const W=300,H=220;
+  const canvas=document.createElement('canvas');
+  const SCALE=Math.max(3,(window.devicePixelRatio||1)*2);
+  canvas.width=W*SCALE; canvas.height=H*SCALE;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+  ctx.fillStyle='#e2d4c3'; ctx.fillRect(0,0,W,H);
+  ctx.save();
+  ctx.translate(20, 15);
+  ctx.rotate(-0.04);
+  ctx.fillStyle='rgba(0,0,0,0.12)';
+  ctx.fillRect(4,4,240,180);
+  ctx.fillStyle='#FCFCF9';
+  ctx.fillRect(0,0,240,180);
+  ctx.strokeStyle='#d2d2d2'; ctx.lineWidth=1; ctx.strokeRect(0,0,240,180);
+  ctx.fillStyle='#222'; ctx.textAlign='center';
+  ctx.font='bold 12px "Noto Sans TC",sans-serif';
+  ctx.fillText('統一發票 (二聯式)',120,24);
+  ctx.font='bold 15px "Noto Sans TC",sans-serif';
+  ctx.fillText('AB-88920154',120,44);
+  ctx.font='10px "Noto Sans TC",sans-serif'; ctx.fillStyle='#444';
+  ctx.fillText('中華民國 115 年 05 月 12 日',120,60);
+  ctx.textAlign='left';
+  ctx.fillText('買方：個人 / 營業人',15,80);
+  ctx.fillText('賣方：聯發文具行 (80123456)',15,96);
+  ctx.beginPath(); ctx.moveTo(10,105); ctx.lineTo(230,105); ctx.strokeStyle='#bbb'; ctx.stroke();
+  ctx.fillText('辦公用品與耗材組',15,124);
+  ctx.textAlign='right'; ctx.fillText('NT$ 1,200',225,124);
+  ctx.textAlign='left';
+  ctx.fillText('營業稅(5%)',15,142); ctx.textAlign='right'; ctx.fillText('NT$ 60',225,142);
+  ctx.font='bold 12px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.textAlign='left'; ctx.fillText('總計 AMOUNT',15,164); ctx.textAlign='right'; ctx.fillText('NT$ 1,260',225,164);
+  ctx.restore();
+  return canvas.toDataURL('image/png');
+}
+
+function generateEmailBodyImage(showHeader){
+  if(showHeader===undefined) showHeader=true;
+  const W=320,H=showHeader?370:322;
+  const canvas=document.createElement('canvas');
+  const SCALE=Math.max(3,(window.devicePixelRatio||1)*2);
+  canvas.width=W*SCALE; canvas.height=H*SCALE;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#e2e2e2'; ctx.lineWidth=1; ctx.strokeRect(1,1,W-2,H-2);
+  ctx.textAlign='left';
+  let y=26;
+  if(showHeader){
+    ctx.font='bold 12.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+    ctx.fillText('寄件者：service@client.com',16,y); y+=19;
+    ctx.font='11.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#1e88e5';
+    ctx.fillText('主旨：【訂購單】20250210_採購項目明細',16,y); y+=14;
+    ctx.strokeStyle='#eee'; ctx.beginPath(); ctx.moveTo(12,y); ctx.lineTo(W-12,y); ctx.stroke(); y+=22;
+  } else {
+    y=30;
+  }
+  ctx.font='11.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  ctx.fillText('Dear 陳經理：',16,y); y+=22;
+  ctx.fillText('您好！',16,y); y+=18;
+  ctx.fillText('我司（成功科技）擬向貴公司採購以下產品，',16,y); y+=16;
+  ctx.fillText('詳細內容如下：',16,y); y+=20;
+  ctx.font='bold 11px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.fillText('採購單號：CT3-CGD-202502100001',16,y); y+=17;
+  ctx.fillText('採購日期：2025/02/10',16,y); y+=17;
+  ctx.fillText('採購明細：',16,y); y+=16;
+
+  const cols=[16,110,178,208,242];
+  ctx.font='bold 9.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.fillText('產品名稱',cols[0],y);
+  ctx.fillText('品號',cols[1],y);
+  ctx.fillText('數量',cols[2],y);
+  ctx.fillText('單價',cols[3],y);
+  ctx.fillText('金額',cols[4],y);
+  y+=6;
+  ctx.strokeStyle='#ccc'; ctx.beginPath(); ctx.moveTo(12,y); ctx.lineTo(W-12,y); ctx.stroke(); y+=15;
+  ctx.font='9.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  const row=(name,code,qty,price,amt)=>{
+    ctx.fillText(name,cols[0],y);
+    ctx.fillText(code,cols[1],y);
+    ctx.fillText(qty,cols[2],y);
+    ctx.fillText(price,cols[3],y);
+    ctx.fillText(amt,cols[4],y);
+    y+=19;
+  };
+  row('奶茶飲料','00002','1','20','20');
+  row('自行車','0101100…','1','1000','1000');
+  y+=3;
+  ctx.strokeStyle='#ccc'; ctx.beginPath(); ctx.moveTo(12,y); ctx.lineTo(W-12,y); ctx.stroke(); y+=22;
+  ctx.font='10px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  ctx.fillText('請確認上述內容，並於[2025/2/25]前簽署回傳。',16,y); y+=17;
+  ctx.fillText('如有任何問題，請隨時聯繫：',16,y); y+=17;
+  ctx.fillText('採購專員：王小玫　手機：0911XXX',16,y); y+=20;
+  ctx.font='bold 10.5px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.fillText('感謝您的配合！',16,y);
+  return canvas.toDataURL('image/png');
+}
+
+(function initDemoImages(){
+  const img1=document.getElementById('invoiceDemoImg');
+  if(img1) img1.src=generateInvoiceDemoImage();
+  const thumb1=document.getElementById('s1ThumbImg');
+  if(thumb1) thumb1.src=generateInvoiceDemoImage();
+  const thumb2=document.getElementById('s2ThumbImg');
+  if(thumb2) thumb2.src=generateMobileInvoiceImage();
+  const resultImg2=document.getElementById('s2ResultImg');
+  if(resultImg2) resultImg2.src=generateMobileInvoiceImage();
+  const emailImgSmall=document.getElementById('emailBodyImgSmall');
+  if(emailImgSmall) emailImgSmall.src=generateEmailBodyImage(true);
+  const emailImgLarge=document.getElementById('emailBodyImgLarge');
+  if(emailImgLarge) emailImgLarge.src=generateEmailBodyImage(false);
+})();
+
+let scenario1AutoRunning=false;
+let scenario1RunToken=0;
+let invoiceScanTimeout=null;
+
+function uploadInvoiceFile(){
+  const s1step2=document.getElementById('s1step2');
+  const dropzone=document.getElementById('s1Dropzone');
+  const uploaded=document.getElementById('s1UploadedArea');
+  if(s1step2){ s1step2.style.opacity='1'; s1step2.style.color='var(--primary)'; }
+  if(dropzone) dropzone.style.display='none';
+  if(uploaded) uploaded.style.display='block';
+}
+
+function confirmInvoiceUpload(){
+  const uploadView=document.getElementById('s1UploadView');
+  const resultView=document.getElementById('s1ResultView');
+  const s1step3=document.getElementById('s1step3');
+  if(uploadView) uploadView.style.display='none';
+  if(resultView) resultView.style.display='block';
+  if(s1step3){ s1step3.style.opacity='1'; s1step3.style.color='var(--primary)'; }
+  startInvoiceAnalysis();
+}
+
+async function autoRunScenario1(){
+  if(scenario1AutoRunning) return;
+  scenario1AutoRunning=true;
+  const myToken=++scenario1RunToken;
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+  resetScenario1View();
+  await delay(850);
+  if(myToken!==scenario1RunToken){ scenario1AutoRunning=false; return; }
+  uploadInvoiceFile();
+  await delay(850);
+  if(myToken!==scenario1RunToken){ scenario1AutoRunning=false; return; }
+  confirmInvoiceUpload();
+  await delay(2800);
+  scenario1AutoRunning=false;
+}
+
+function switchScenario(scen){
+  const t1=document.getElementById('tabScenario1');
+  const t2=document.getElementById('tabScenario2');
+  const t3=document.getElementById('tabScenario3');
+  const v1=document.getElementById('scenario1View');
+  const v2=document.getElementById('scenario2View');
+  const v3=document.getElementById('scenario3View');
+
+  t1.classList.remove('active');
+  t2.classList.remove('active');
+  t3.classList.remove('active');
+  v1.style.display='none';
+  v2.style.display='none';
+  v3.style.display='none';
+
+  if(scen===1){
+    t1.classList.add('active');
+    v1.style.display='block';
+    if(typeof resetInvoiceDemo==='function') resetInvoiceDemo();
+  }else if(scen===2){
+    t2.classList.add('active');
+    v2.style.display='block';
+    if(typeof resetScenario2AndIntro==='function') resetScenario2AndIntro();
+  }else if(scen===3){
+    t3.classList.add('active');
+    v3.style.display='block';
+    if(typeof resetScenario3AndIntro==='function') resetScenario3AndIntro();
+  }
+}
+
+function showScenarioFlow(prefix){
+  const intro=document.getElementById(prefix+'IntroView');
+  const flow=document.getElementById(prefix+'FlowView');
+  if(intro) intro.style.display='none';
+  if(flow){ flow.classList.remove('u-hide'); flow.style.display='flex'; flow.style.flexDirection='column'; }
+}
+function backToScenarioIntro(prefix){
+  const intro=document.getElementById(prefix+'IntroView');
+  const flow=document.getElementById(prefix+'FlowView');
+  if(flow){ flow.classList.add('u-hide'); flow.style.display='none'; }
+  if(intro) intro.style.display='flex';
+}
+
+async function startScenario1FromIntro(){
+  showScenarioFlow('s1');
+  const btn=document.getElementById('s1ResetBtn');
+  if(btn) btn.disabled=true;
+  await autoRunScenario1();
+  if(btn) btn.disabled=false;
+}
+
+async function startScenario2FromIntro(){
+  showScenarioFlow('s2');
+  const btn=document.getElementById('s2ResetBtn');
+  if(btn) btn.disabled=true;
+  await startScenario2Process();
+  if(btn) btn.disabled=false;
+}
+
+async function startScenario3FromIntro(){
+  showScenarioFlow('s3');
+  const btn=document.getElementById('s3ResetBtn');
+  if(btn) btn.disabled=true;
+  await startScenario3Process();
+  if(btn) btn.disabled=false;
+}
+
+function startInvoiceAnalysis(){
+  const line=document.getElementById('dwgScanLine');
+  const overlay=document.getElementById('dwgOverlay');
+  const results=document.getElementById('aiResults');
+  if(!line||!overlay) return;
+  if(results){results.style.display='none';}
+  line.classList.remove('active');
+  overlay.classList.remove('show');
+
+  void line.offsetWidth;
+  line.classList.add('active');
+  overlay.classList.add('show');
+  if(invoiceScanTimeout){ clearTimeout(invoiceScanTimeout); }
+  invoiceScanTimeout=setTimeout(()=>{
+    line.classList.remove('active');
+    overlay.classList.remove('show');
+    if(results){results.style.display='grid';}
+    invoiceScanTimeout=null;
+  },2800);
+}
+
+function resetScenario1View(){
+  if(invoiceScanTimeout){ clearTimeout(invoiceScanTimeout); invoiceScanTimeout=null; }
+  const line=document.getElementById('dwgScanLine');
+  const overlay=document.getElementById('dwgOverlay');
+  const results=document.getElementById('aiResults');
+  if(line)line.classList.remove('active');
+  if(overlay)overlay.classList.remove('show');
+  if(results)results.style.display='none';
+
+  const uploadView=document.getElementById('s1UploadView');
+  const resultView=document.getElementById('s1ResultView');
+  const dropzone=document.getElementById('s1Dropzone');
+  const uploaded=document.getElementById('s1UploadedArea');
+  if(uploadView) uploadView.style.display='block';
+  if(resultView) resultView.style.display='none';
+  if(dropzone) dropzone.style.display='block';
+  if(uploaded) uploaded.style.display='none';
+
+  const s1step1=document.getElementById('s1step1');
+  const s1step2=document.getElementById('s1step2');
+  const s1step3=document.getElementById('s1step3');
+  if(s1step1){ s1step1.style.opacity='1'; s1step1.style.color='var(--primary)'; }
+  if(s1step2){ s1step2.style.opacity='.6'; s1step2.style.color='var(--mid)'; }
+  if(s1step3){ s1step3.style.opacity='.6'; s1step3.style.color='var(--mid)'; }
+}
+
+function resetInvoiceDemo(){
+  scenario1RunToken++;
+  scenario1AutoRunning=false;
+  resetScenario1View();
+  backToScenarioIntro('s1'); 
+  const btn=document.getElementById('s1ResetBtn');
+  if(btn) btn.disabled=true;
+}
+
+let scenario2Running=false;
+async function startScenario2Process(){
+  if(scenario2Running) return;
+  scenario2Running=true;
+  resetScenario2();
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+
+  const s2step1=document.getElementById('s2step1');
+  const s2step2=document.getElementById('s2step2');
+  const s2step3=document.getElementById('s2step3');
+  const chatBody=document.getElementById('s2ChatBody');
+  const welcome=document.getElementById('s2Welcome');
+  const quickUpload=document.getElementById('s2QuickUpload');
+  const userReply=document.getElementById('s2UserReplyUpload');
+  const sceneUpload=document.getElementById('s2SceneUpload');
+  const uploadPrompt=document.getElementById('s2UploadPrompt');
+  const thumbWrap=document.getElementById('s2ThumbWrap');
+  const actionSheet=document.getElementById('s2ActionSheet');
+  const actionCamera=document.getElementById('s2ActionCamera');
+  const resultView=document.getElementById('s2ResultView');
+  const recoView=document.getElementById('s2RecoView');
+  const scanLine=document.getElementById('mobileScanLine');
+  const overlay=document.getElementById('mobileOverlay');
+  const resultMsgs=document.getElementById('s2ResultMsgs');
+
+  if(s2step1){ s2step1.style.opacity='1'; s2step1.style.color='var(--primary)'; }
+  await delay(1100);
+
+  if(quickUpload){ quickUpload.style.background='var(--primary-pale)'; quickUpload.style.borderColor='var(--primary)'; }
+  if(userReply) userReply.style.display='flex';
+  await delay(1400);
+
+  if(s2step2){ s2step2.style.opacity='1'; s2step2.style.color='var(--primary)'; }
+  if(welcome) welcome.style.display='none';
+  if(sceneUpload) sceneUpload.style.display='block';
+  await delay(2200);
+
+  if(uploadPrompt) uploadPrompt.style.display='block';
+  await delay(1200);
+  if(actionSheet) actionSheet.style.display='block';
+  await delay(400);
+  if(actionCamera){ actionCamera.style.background='rgba(255,255,255,.18)'; }
+  await delay(1800);
+  if(actionSheet) actionSheet.style.display='none';
+
+  if(thumbWrap) thumbWrap.style.display='block';
+  await delay(2000);
+
+  if(s2step3){ s2step3.style.opacity='1'; s2step3.style.color='var(--primary)'; }
+  if(chatBody) chatBody.style.display='none';
+  if(recoView) recoView.style.display='none';
+  if(resultView) resultView.style.display='block';
+  if(scanLine) scanLine.classList.add('active');
+  if(overlay) overlay.classList.add('show');
+  await delay(2200);
+  if(scanLine) scanLine.classList.remove('active');
+  if(overlay) overlay.classList.remove('show');
+  if(resultMsgs) resultMsgs.style.display='block';
+  await delay(1800);
+
+  const recoChip=document.getElementById('s2ChipViewReco');
+  if(recoChip){ recoChip.style.background='var(--primary-pale)'; recoChip.style.borderColor='var(--primary)'; }
+  await delay(650);
+  if(recoChip){ recoChip.style.background='#fff'; recoChip.style.borderColor='var(--border)'; }
+  showS2Reco();
+
+  scenario2Running=false;
+}
+
+function showS2Reco(){
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const nowStr=`${now.getFullYear()}/${pad(now.getMonth()+1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const recoTime=document.getElementById('s2RecoTime');
+  if(recoTime) recoTime.textContent=nowStr;
+  const resultView=document.getElementById('s2ResultView');
+  const recoView=document.getElementById('s2RecoView');
+  if(resultView) resultView.style.display='none';
+  if(recoView) recoView.style.display='block';
+}
+
+function resetScenario2(){
+  const s2step1=document.getElementById('s2step1');
+  const s2step2=document.getElementById('s2step2');
+  const s2step3=document.getElementById('s2step3');
+  const chatBody=document.getElementById('s2ChatBody');
+  const welcome=document.getElementById('s2Welcome');
+  const quickUpload=document.getElementById('s2QuickUpload');
+  const userReply=document.getElementById('s2UserReplyUpload');
+  const sceneUpload=document.getElementById('s2SceneUpload');
+  const uploadPrompt=document.getElementById('s2UploadPrompt');
+  const thumbWrap=document.getElementById('s2ThumbWrap');
+  const actionSheet=document.getElementById('s2ActionSheet');
+  const actionCamera=document.getElementById('s2ActionCamera');
+  const resultView=document.getElementById('s2ResultView');
+  const recoView=document.getElementById('s2RecoView');
+  const scanLine=document.getElementById('mobileScanLine');
+  const overlay=document.getElementById('mobileOverlay');
+  const resultMsgs=document.getElementById('s2ResultMsgs');
+  const recoChip=document.getElementById('s2ChipViewReco');
+
+  if(s2step1){ s2step1.style.opacity='1'; s2step1.style.color='var(--primary)'; }
+  if(s2step2){ s2step2.style.opacity='.6'; s2step2.style.color='var(--mid)'; }
+  if(s2step3){ s2step3.style.opacity='.6'; s2step3.style.color='var(--mid)'; }
+
+  if(chatBody) chatBody.style.display='block';
+  if(welcome) welcome.style.display='block';
+  if(sceneUpload) sceneUpload.style.display='none';
+  if(uploadPrompt) uploadPrompt.style.display='none';
+  if(quickUpload){ quickUpload.style.background='#fff'; quickUpload.style.borderColor='var(--border)'; }
+  if(userReply) userReply.style.display='none';
+  if(thumbWrap) thumbWrap.style.display='none';
+  if(actionSheet) actionSheet.style.display='none';
+  if(actionCamera){ actionCamera.style.background='transparent'; }
+  if(resultView) resultView.style.display='none';
+  if(recoView) recoView.style.display='none';
+  if(scanLine) scanLine.classList.remove('active');
+  if(overlay) overlay.classList.remove('show');
+  if(resultMsgs) resultMsgs.style.display='none';
+  if(recoChip){ recoChip.style.background='#fff'; recoChip.style.borderColor='var(--border)'; }
+  scenario2Running=false;
+}
+
+function resetScenario2AndIntro(){
+  resetScenario2();
+  backToScenarioIntro('s2');
+  const btn=document.getElementById('s2ResetBtn');
+  if(btn) btn.disabled=true;
+}
+
+let scenario3Running=false;
+async function startScenario3Process(){
+  if(scenario3Running) return;
+  scenario3Running=true;
+  resetScenario3();
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+
+  const s3step1=document.getElementById('s3step1');
+  const s3step2=document.getElementById('s3step2');
+  const s3step3=document.getElementById('s3step3');
+  const processView=document.getElementById('s3ProcessView');
+  const mailboxView=document.getElementById('s3MailboxView');
+  const scheduleView=document.getElementById('s3ScheduleView');
+  const arrowDown=document.getElementById('s3ArrowDown');
+  const inboxRecords=document.getElementById('s3InboxRecords');
+  const inboxStatus=document.getElementById('s3InboxStatus');
+  const resultView=document.getElementById('s3ResultView');
+  const scanLine=document.getElementById('emailScanLine');
+  const overlay=document.getElementById('emailOverlay');
+  const results=document.getElementById('s3AiResults');
+
+  if(s3step1){ s3step1.style.opacity='1'; s3step1.style.color='var(--primary)'; }
+  await delay(1100);
+
+  if(s3step2){ s3step2.style.opacity='1'; s3step2.style.color='var(--primary)'; }
+  if(mailboxView) mailboxView.style.display='none';
+  if(scheduleView) scheduleView.style.display='block';
+  await delay(2400);
+
+  if(arrowDown) arrowDown.style.display='block';
+  if(inboxRecords) inboxRecords.style.display='block';
+  await delay(1400);
+  if(inboxStatus){ inboxStatus.textContent='已拋轉'; inboxStatus.style.color='#059669'; }
+  await delay(1800);
+
+  if(s3step3){ s3step3.style.opacity='1'; s3step3.style.color='var(--primary)'; }
+  if(processView) processView.style.display='none';
+  if(resultView) resultView.style.display='block';
+  if(scanLine) scanLine.classList.add('active');
+  if(overlay) overlay.classList.add('show');
+  await delay(2200);
+  if(scanLine) scanLine.classList.remove('active');
+  if(overlay) overlay.classList.remove('show');
+  if(results) results.style.display='grid';
+
+  scenario3Running=false;
+}
+
+function resetScenario3(){
+  const s3step1=document.getElementById('s3step1');
+  const s3step2=document.getElementById('s3step2');
+  const s3step3=document.getElementById('s3step3');
+  const processView=document.getElementById('s3ProcessView');
+  const mailboxView=document.getElementById('s3MailboxView');
+  const scheduleView=document.getElementById('s3ScheduleView');
+  const arrowDown=document.getElementById('s3ArrowDown');
+  const inboxRecords=document.getElementById('s3InboxRecords');
+  const inboxStatus=document.getElementById('s3InboxStatus');
+  const resultView=document.getElementById('s3ResultView');
+  const scanLine=document.getElementById('emailScanLine');
+  const overlay=document.getElementById('emailOverlay');
+  const results=document.getElementById('s3AiResults');
+
+  if(s3step1){ s3step1.style.opacity='1'; s3step1.style.color='var(--primary)'; }
+  if(s3step2){ s3step2.style.opacity='.6'; s3step2.style.color='var(--mid)'; }
+  if(s3step3){ s3step3.style.opacity='.6'; s3step3.style.color='var(--mid)'; }
+
+  if(processView) processView.style.display='block';
+  if(mailboxView) mailboxView.style.display='block';
+  if(scheduleView) scheduleView.style.display='none';
+  if(arrowDown) arrowDown.style.display='none';
+  if(inboxRecords) inboxRecords.style.display='none';
+  if(inboxStatus){ inboxStatus.textContent='處理中'; inboxStatus.style.color='#D97706'; }
+  if(resultView) resultView.style.display='none';
+  if(scanLine) scanLine.classList.remove('active');
+  if(overlay) overlay.classList.remove('show');
+  if(results) results.style.display='none';
+  scenario3Running=false;
+}
+
+function resetScenario3AndIntro(){
+  resetScenario3();
+  backToScenarioIntro('s3');
+  const btn=document.getElementById('s3ResetBtn');
+  if(btn) btn.disabled=true;
+}
+
+function generatePOImage(){
+  const W=340,H=360;
+  const canvas=document.createElement('canvas');
+  const SCALE=Math.max(3,(window.devicePixelRatio||1)*2);
+  canvas.width=W*SCALE; canvas.height=H*SCALE;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+  ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#d8d8d8'; ctx.lineWidth=2;
+  ctx.strokeRect(4,4,W-8,H-8);
+  ctx.fillStyle='#111'; ctx.textAlign='center';
+  ctx.font='bold 16px "Noto Sans TC",sans-serif';
+  ctx.fillText('採　購　單',W/2,36);
+  ctx.font='12px "Noto Sans TC",sans-serif'; ctx.fillStyle='#555';
+  ctx.fillText('PO-20260417',W/2,56);
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#bbb';
+  ctx.beginPath(); ctx.moveTo(10,70); ctx.lineTo(W-10,70); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.textAlign='left'; ctx.font='12px "Noto Sans TC",sans-serif'; ctx.fillStyle='#333';
+  ctx.fillText('客戶：大昌五金有限公司',22,92);
+  ctx.fillText('統編：24771822',22,112);
+  ctx.fillText('日期：2026/04/17　　預交：04/24',22,132);
+  ctx.beginPath(); ctx.moveTo(10,148); ctx.lineTo(W-10,148); ctx.strokeStyle='#ddd'; ctx.stroke();
+  ctx.font='11px "Noto Sans TC",sans-serif'; ctx.fillStyle='#666';
+  ctx.fillText('品名',22,168); ctx.fillText('數量',210,168); ctx.textAlign='right'; ctx.fillText('金額',312,168);
+  ctx.textAlign='left';
+  const rows=[
+    ['六角螺栓 M6x20','500','1,750'],
+    ['平墊圈','500','400'],
+    ['壓縮彈簧','200','1,040']
+  ];
+  ctx.font='12px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  let y=192;
+  rows.forEach(r=>{
+    ctx.textAlign='left'; ctx.fillText(r[0],22,y);
+    ctx.textAlign='right'; ctx.fillText(r[1],230,y); ctx.fillText(r[2],312,y);
+    y+=28;
+  });
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#bbb';
+  ctx.beginPath(); ctx.moveTo(10,y+2); ctx.lineTo(W-10,y+2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='bold 14px "Noto Sans TC",sans-serif'; ctx.fillStyle='#111';
+  ctx.textAlign='left'; ctx.fillText('總計',22,y+28);
+  ctx.textAlign='right'; ctx.fillText('NT$ 3,190',312,y+28);
+  return canvas.toDataURL('image/png');
+}
+(function initPOImg(){
+  const img=document.getElementById('q-po-img');
+  if(img) img.src=generatePOImage();
+})();
+
+let quoteRunning=false;
+async function runQuote(){
+  if(quoteRunning)return;
+  quoteRunning=true;
+  resetQuote();
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+
+  const fname  = document.getElementById('q-fname');
+  const upfill = document.getElementById('q-upfill');
+  const updone = document.getElementById('q-updone');
+  const imgWrap= document.getElementById('q-img-wrap');
+  const scanLine= document.getElementById('q-scan-line');
+  const qs0    = document.getElementById('qs0');
+  const qs0fill= document.getElementById('qs0fill');
+
+  if(fname) { fname.textContent='採購單_PO-20260417.pdf'; fname.style.color='var(--primary)'; }
+  if(qs0) qs0.classList.add('active');
+
+  let up=0;
+  while(up<100){
+    up=Math.min(100,up+(3+Math.random()*5));
+    if(upfill) upfill.style.width=up+'%';
+    if(qs0fill) qs0fill.style.width=up+'%';
+    await delay(22);
+  }
+  if(updone) updone.style.display='block';
+  if(qs0){ qs0.classList.remove('active'); qs0.classList.add('done'); }
+
+  if(imgWrap) imgWrap.style.display='block';
+  await delay(200);
+
+  const qs1 = document.getElementById('qs1');
+  const qs1fill= document.getElementById('qs1fill');
+  if(qs1) qs1.classList.add('active');
+  if(scanLine){ scanLine.style.opacity='1'; scanLine.style.transition='top 1.6s ease-in-out'; scanLine.style.top='0'; }
+  await delay(100);
+  if(scanLine) scanLine.style.top='100%';
+  let w1=0;
+  while(w1<100){
+    w1=Math.min(100,w1+(2+Math.random()*4));
+    if(qs1fill) qs1fill.style.width=w1+'%';
+    await delay(25);
+  }
+  if(scanLine){ scanLine.style.opacity='0'; }
+  if(qs1){ qs1.classList.remove('active'); qs1.classList.add('done'); }
+  await delay(200);
+
+  for(let i=2;i<=3;i++){
+    const el=document.getElementById('qs'+i);
+    if(el) el.classList.add('active');
+    const fill=document.getElementById('qs'+i+'fill');
+    let w=0;
+    while(w<100){
+      w=Math.min(100,w+(2+Math.random()*4));
+      if(fill) fill.style.width=w+'%';
+      await delay(30);
+    }
+    if(el){ el.classList.remove('active'); el.classList.add('done'); }
+    await delay(200);
+  }
+
+  const confirmBtn = document.getElementById('quoteConfirmBtn');
+  if(confirmBtn) confirmBtn.style.display='flex';
+  quoteRunning=false;
+}
+
+function showQuoteResult(){
+  const res=document.getElementById('quoteResult');
+  if(res){
+    res.style.display='block';
+    requestAnimationFrame(()=>{
+      res.style.opacity='1';
+      res.style.transform='translateY(0)';
+    });
+  }
+  const confirmBtn=document.getElementById('quoteConfirmBtn');
+  if(confirmBtn) confirmBtn.style.display='none';
+}
+
+function resetQuote(){
+  ['qs0','qs1','qs2','qs3'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active','done');
+    const fill=document.getElementById(id+'fill');
+    if(fill) fill.style.width='0%';
+  });
+  const fname=document.getElementById('q-fname');
+  const upfill=document.getElementById('q-upfill');
+  const updone=document.getElementById('q-updone');
+  const imgWrap=document.getElementById('q-img-wrap');
+  const scanLine=document.getElementById('q-scan-line');
+  const confirmBtn=document.getElementById('quoteConfirmBtn');
+  if(fname){ fname.textContent='尚未上傳單據'; fname.style.color='var(--mid)'; }
+  if(upfill) upfill.style.width='0%';
+  if(updone) updone.style.display='none';
+  if(imgWrap) imgWrap.style.display='none';
+  if(scanLine){ scanLine.style.opacity='0'; scanLine.style.top='0'; scanLine.style.transition='none'; }
+  if(confirmBtn) confirmBtn.style.display='none';
+  const res=document.getElementById('quoteResult');
+  if(res){ res.style.display='none'; res.style.opacity='0'; res.style.transform='translateY(10px)'; }
+  quoteRunning=false;
+}
+
+const FEAT_DATA={
+  correction:{
+    t:'校正庫：越用越準的辨識記憶',
+    d:'人工修正辨識結果後，系統會記住廠商與品號的對應規則存進校正庫。同一廠商下次來單，AI 直接套用，準確率隨使用次數持續提升。',
+    mock:`<div style="width:100%;display:flex;flex-direction:column;gap:1.3rem">
+    <div style="width:100%">
+      <div style="display:flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;color:var(--primary);margin-bottom:.4rem"><span style="width:16px;height:16px;border-radius:50%;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.56rem;flex-shrink:0">1</span>單據資料</div>
+    <div style="width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);font-size:.62rem;text-align:left">
+      <div style="background:var(--primary);color:#fff;text-align:center;padding:.25rem 0;font-size:.7rem">︿</div>
+      <div style="padding:.6rem .7rem .5rem">
+        <div style="color:var(--primary);font-weight:700;font-size:.72rem;border-bottom:2px solid var(--primary);display:inline-block;padding-bottom:.15rem;margin-bottom:.55rem">檔案資料</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.45rem .6rem">
+          <div style="display:flex;align-items:stretch">
+            <span style="background:var(--primary);color:#fff;font-weight:700;padding:.25rem .5rem;border-radius:4px 0 0 4px;width:4.4rem;flex-shrink:0;display:flex;align-items:center;justify-content:center">客戶名稱</span>
+            <span style="border:1px solid var(--border);border-left:none;padding:.25rem .5rem;border-radius:0 4px 4px 0;flex:1;background:#fff;display:flex;align-items:center">AAA</span>
+          </div>
+          <div style="display:flex;align-items:stretch">
+            <span style="background:var(--primary);color:#fff;font-weight:700;padding:.25rem .5rem;border-radius:4px 0 0 4px;width:4.4rem;flex-shrink:0;display:flex;align-items:center;justify-content:center">採購單號</span>
+            <span style="border:1px solid var(--border);border-left:none;padding:.25rem .5rem;border-radius:0 4px 4px 0;flex:1;background:#fff;display:flex;align-items:center">A1755</span>
+          </div>
+          <div style="display:flex;align-items:stretch">
+            <span style="background:var(--primary);color:#fff;font-weight:700;padding:.25rem .5rem;border-radius:4px 0 0 4px;width:4.4rem;flex-shrink:0;display:flex;align-items:center;justify-content:center">幣別</span>
+            <span style="border:1px solid var(--border);border-left:none;padding:.25rem .5rem;border-radius:0 4px 4px 0;flex:1;background:#fff;display:flex;align-items:center">USD</span>
+          </div>
+          <div style="display:flex;align-items:stretch">
+            <span style="background:var(--primary);color:#fff;font-weight:700;padding:.25rem .5rem;border-radius:4px 0 0 4px;width:4.4rem;flex-shrink:0;display:flex;align-items:center;justify-content:center">單別</span>
+            <span style="border:1px solid var(--border);border-left:none;padding:.25rem .5rem;border-radius:0 4px 4px 0;flex:1;background:#fff;display:flex;align-items:center">221</span>
+          </div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.58rem;white-space:nowrap;table-layout:fixed">
+          <colgroup>
+            <col style="width:8%">
+            <col style="width:20%">
+            <col style="width:13%">
+            <col style="width:11%">
+            <col style="width:13%">
+            <col style="width:15%">
+            <col style="width:20%">
+          </colgroup>
+          <thead>
+            <tr style="background:var(--primary);color:#fff">
+              <th style="padding:.3rem .35rem;font-weight:700">序號</th>
+              <th style="padding:.3rem .35rem;font-weight:700">客戶品號</th>
+              <th style="padding:.3rem .35rem;font-weight:700">數量</th>
+              <th style="padding:.3rem .35rem;font-weight:700">單位</th>
+              <th style="padding:.3rem .35rem;font-weight:700">單價</th>
+              <th style="padding:.3rem .35rem;font-weight:700">金額</th>
+              <th style="padding:.3rem .35rem;font-weight:700">預交日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="height:2rem">
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">1</td>
+              <td style="padding:.35rem .35rem;vertical-align:middle;border:1px solid var(--border);position:relative;height:1.9rem;box-sizing:border-box">
+                <span style="position:absolute;top:50%;left:.35rem;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:flex-start;flex-shrink:0;width:3.4rem;height:1.15rem;box-sizing:border-box;border:1.5px solid var(--primary);border-radius:4px;padding:0 .4rem;background:#fff;font-weight:700;color:var(--dark);font-family:'SFMono-Regular',Consolas,Menlo,monospace;overflow:hidden"><span id="corrField" style="white-space:nowrap">A1O23</span><span id="corrCaret" style="display:inline-block;width:1px;height:.9em;background:var(--primary);margin-left:1px;flex-shrink:0;animation:blinkCaret 1s steps(1) infinite"></span></span>
+              </td>
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">150000</td>
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">PCS</td>
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">0.0262</td>
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">3930.00</td>
+              <td style="padding:.35rem .35rem;text-align:center;vertical-align:middle;border:1px solid var(--border)">20260403</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+    <div style="width:100%">
+      <div style="display:flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;color:var(--primary);margin-bottom:.4rem"><span style="width:16px;height:16px;border-radius:50%;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.56rem;flex-shrink:0">2</span>校正流程</div>
+    <div style="width:100%;background:#F3F6FF;border:1.5px solid var(--primary);border-radius:10px;padding:.75rem;box-shadow:0 2px 10px rgba(0,0,0,.05)">
+      <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.72rem">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:.5rem .65rem;color:var(--dark)">AI 辨識料號： <b>A1O23</b> <span style="color:#dc2626">✗</span></div>
+        <div style="background:#EAF3FF;border-radius:var(--r2);padding:.45rem 0;text-align:center;color:var(--primary);font-size:.85rem;font-weight:700">⬇ 人 工 校 正</div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:.5rem .65rem;color:var(--dark)">正確料號：<b>A1023</b> <span style="color:#16a34a">✓</span></div>
+        <div style="background:#EAF3FF;border-radius:var(--r2);padding:.45rem 0;text-align:center;color:var(--primary);font-size:.85rem;font-weight:700">⬇ 存入校正庫</div>
+        <div style="background:var(--primary);color:#fff;border-radius:var(--r2);padding:.5rem .65rem;font-weight:700;text-align:center">下次同廠商單據，自動套用校正結果</div>
+      </div>
+    </div>
+    </div>
+    </div>`
+  },
+  compare:{
+    t:'自動比對 ERP，異動一眼看見',
+    d:'生單助理自動比對來單與 ERP 既有訂單，數量、單價、交期一有落差就標示出來，並直接產生訂單變更單，免除逐欄手動核對。',
+    mock:`<div style="width:100%;background:#fff;border-radius:8px;box-shadow:0 2px 14px rgba(20,40,70,.08);padding:.3rem;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.6rem;table-layout:fixed;min-width:560px">
+        <colgroup>
+          <col style="width:5%"><col style="width:6%"><col style="width:17%"><col style="width:11%"><col style="width:13%"><col style="width:10%"><col style="width:10%"><col style="width:9%"><col style="width:12%"><col style="width:7%">
+        </colgroup>
+        <thead>
+          <tr style="color:var(--mid);border-bottom:1px solid var(--border)">
+            <th style="padding:.4rem .3rem"><span style="display:inline-block;width:9px;height:9px;border:1px solid #C7D2DD;border-radius:2px"></span></th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">序號</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">訂單單號</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">訂單項次</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">品號</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">數量</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">交貨日</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">狀態</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">訂單單號</th>
+            <th style="padding:.4rem .3rem;font-weight:700;text-align:left">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid var(--border)">
+            <td style="padding:.42rem .3rem" rowspan="2"><span style="display:inline-block;width:9px;height:9px;border:1px solid #C7D2DD;border-radius:2px"></span></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)" rowspan="2">1</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">4500983271</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">10</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">1319-365-01</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">5.000</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">2025/10/26</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">未確認</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:#FAFBFD">
+            <td style="padding:.42rem .3rem;color:var(--dark)">4500983271</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">10</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">1319-365-01</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">5.000</td>
+            <td style="padding:.42rem .3rem;color:#e53935;font-weight:700">2025/05/11</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">100-25030601</td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-top:1px solid var(--border)">
+            <td style="padding:.42rem .3rem" rowspan="2"><span style="display:inline-block;width:9px;height:9px;border:1px solid #C7D2DD;border-radius:2px"></span></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)" rowspan="2">2</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">147852369</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">10</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">01275-01</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">15</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">2025/10/26</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">未確認</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:#FAFBFD">
+            <td style="padding:.42rem .3rem;color:var(--dark)">147852369</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">10</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem;color:#e53935;font-weight:700">10</td>
+            <td style="padding:.42rem .3rem;color:#e53935;font-weight:700">2025/09/25</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">100-25092501</td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-top:1px solid var(--border)">
+            <td style="padding:.42rem .3rem" rowspan="2"><span style="display:inline-block;width:9px;height:9px;border:1px solid #C7D2DD;border-radius:2px"></span></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)" rowspan="2">3</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">147852369</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">20</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">01275-02</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">20</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">2025/10/26</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">未確認</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:#FAFBFD">
+            <td style="padding:.42rem .3rem;color:var(--dark)">147852369</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">20</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem;color:#e53935;font-weight:700">5</td>
+            <td style="padding:.42rem .3rem;color:#e53935;font-weight:700">2025/09/25</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">100-25092501</td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+          <tr style="border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+            <td style="padding:.42rem .3rem"><span style="display:inline-block;width:9px;height:9px;border:1px solid #C7D2DD;border-radius:2px"></span></td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">4</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">100-07090001</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">1</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">00001-201-304</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">130</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">2025/10/26</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)">未確認</td>
+            <td style="padding:.42rem .3rem;color:var(--dark)"></td>
+            <td style="padding:.42rem .3rem"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`
+  },
+  scenario:{
+    t:'口語描述，就能設計專屬場景',
+    d:'場景代號、名稱、系統提示語都用口語描述，把你的判斷邏輯封裝進去；AI 就照設定執行，不必寫程式或畫流程圖。',
+    mock:`<div style="width:100%;background:#EDF3FC;border-radius:10px;padding:.9rem 1rem 1.1rem;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(30,136,229,.14),rgba(30,136,229,0) 70%)"></div>
+    <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-bottom:.85rem;flex-wrap:nowrap">
+      <div style="font-size:.78rem;font-weight:700;color:var(--dark);flex-shrink:0">場景設計器</div>
+      <div style="display:flex;align-items:center;font-size:.56rem;color:var(--mid);white-space:nowrap">
+        <span style="display:flex;align-items:center;gap:.25rem;color:var(--primary);font-weight:700"><span style="width:15px;height:15px;border-radius:50%;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">1</span>基礎資料</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">2</span>更換元件模型</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">3</span>提取規則</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">4</span>整合設置</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">5</span>代理配置</span>
+      </div>
+    </div>
+    <div style="position:relative;background:#fff;border-radius:8px;box-shadow:0 2px 14px rgba(20,40,70,.08);padding:.85rem 1rem;font-size:.68rem;display:flex;flex-direction:column;gap:.55rem">
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span style="width:5.2rem;flex-shrink:0;white-space:nowrap;color:var(--mid);text-align:right">場景代號：</span>
+        <span style="flex:1;border:1px solid var(--border);border-radius:6px;padding:.32rem .55rem;background:#fff;color:var(--dark)">00001</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span style="width:5.2rem;flex-shrink:0;white-space:nowrap;color:var(--mid);text-align:right"><span style="color:#e53935">*</span> 場景名稱：</span>
+        <span style="flex:1;border:1px solid var(--border);border-radius:6px;padding:.32rem .55rem;background:#fff;color:var(--dark)">採購發票</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="width:5.2rem;flex-shrink:0;white-space:nowrap;color:var(--mid);text-align:right"><span style="color:#e53935">*</span> 功能選擇：</span>
+        <span style="flex:1;border:1px solid var(--border);border-radius:6px;padding:.32rem .55rem;background:#fff;color:var(--dark)">檔案辨識</span>
+        <span style="width:4.8rem;flex-shrink:0;white-space:nowrap;color:var(--mid);text-align:right"><span style="color:#e53935">*</span> 憑證格式：</span>
+        <span style="flex:1;border:1px solid var(--border);border-radius:6px;padding:.32rem .55rem;background:#fff;color:var(--dark)">憑證</span>
+      </div>
+      <div style="display:flex;gap:.6rem">
+        <span style="width:5.2rem;flex-shrink:0;white-space:nowrap;color:var(--mid);text-align:right;padding-top:.32rem"><span style="color:#e53935">*</span> 系統提示詞：</span>
+        <span style="flex:1;border:1px solid var(--border);border-radius:6px;padding:.5rem .55rem;background:#fff;color:var(--dark);line-height:1.6;min-height:7.6rem;display:block;box-sizing:border-box">使用者提供的發票憑證圖檔，主要的內容含發票日期、發票號碼、賣方統編、銷售額。</span>
+      </div>
+    </div>
+    </div>`
+  },
+  extract:{
+    t:'口語設定，要擷取的單據內容資訊',
+    d:'口語列出要擷取的欄位，像客戶名稱、序號、品項、規格、數量，AI 就照清單讀單、對應資料，不必另寫程式。',
+    mock:`<div style="width:100%;background:#EDF3FC;border-radius:10px;padding:.9rem 1rem 1.1rem;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(30,136,229,.14),rgba(30,136,229,0) 70%)"></div>
+    <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-bottom:.85rem;flex-wrap:nowrap">
+      <div style="font-size:.78rem;font-weight:700;color:var(--dark);flex-shrink:0">場景設計器</div>
+      <div style="display:flex;align-items:center;font-size:.56rem;color:var(--mid);white-space:nowrap">
+        <span style="display:flex;align-items:center;gap:.25rem;color:#16a34a"><span style="width:15px;height:15px;border-radius:50%;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">✓</span>基礎資料</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem;color:#16a34a"><span style="width:15px;height:15px;border-radius:50%;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">✓</span>更換元件模型</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem;color:var(--primary);font-weight:700"><span style="width:15px;height:15px;border-radius:50%;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">3</span>提取規則</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">4</span>整合設置</span>
+        <span style="width:14px;height:1px;background:var(--border);margin:0 .3rem"></span>
+        <span style="display:flex;align-items:center;gap:.25rem"><span style="width:15px;height:15px;border-radius:50%;border:1px solid #C7D2DD;color:var(--mid);display:inline-flex;align-items:center;justify-content:center;font-size:.5rem;flex-shrink:0">5</span>代理配置</span>
+      </div>
+    </div>
+    <div style="position:relative;background:#fff;border-radius:8px;box-shadow:0 2px 14px rgba(20,40,70,.08);padding:.85rem 1rem;font-size:.66rem;display:flex;flex-direction:column;gap:.55rem">
+      <div>
+        <div style="color:var(--mid);margin-bottom:.28rem"><span style="color:#e53935">*</span> 請用自然語言來描述該文檔的類型 <span style="display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:50%;border:1px solid #B9C4D0;font-size:.5rem;color:var(--mid)">i</span>：</div>
+        <div style="border:1px solid var(--border);border-radius:6px;padding:.32rem .55rem;background:#fff;color:var(--dark)">這是一張發票</div>
+      </div>
+      <div>
+        <div style="color:var(--mid);margin-bottom:.28rem"><span style="color:#e53935">*</span> 請用自然語言來描述表格中需要的欄位 <span style="display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:50%;border:1px solid #B9C4D0;font-size:.5rem;color:var(--mid)">i</span>：</div>
+        <div style="border:1px solid var(--border);border-radius:6px;padding:.4rem .55rem;background:#fff;color:var(--dark);line-height:1.6;min-height:2.6rem">Master包含的欄位有「發票號碼」、「發票日期」、「賣方統編」、「金額」；</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.15rem">
+        <span></span>
+        <span style="background:#5B67E8;color:#fff;font-weight:700;border-radius:6px;padding:.4rem 1.1rem">AI 一鍵生成</span>
+        <span></span>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:.1rem">
+        <span style="background:var(--primary);color:#fff;font-weight:700;border-radius:6px;padding:.32rem .85rem">新增</span>
+      </div>
+      <div style="overflow-x:auto;margin-top:.15rem">
+        <table style="width:100%;border-collapse:collapse;font-size:.58rem;table-layout:fixed">
+          <colgroup>
+            <col style="width:12%"><col style="width:22%"><col style="width:10%"><col style="width:12%"><col style="width:9%"><col style="width:9%"><col style="width:10%"><col style="width:9%">
+          </colgroup>
+          <thead>
+            <tr style="background:#F4F6FA;color:var(--mid)">
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">欄位名稱</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">欄位要素提取</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">檢驗規則</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">範例值</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">欄位摘要</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">併單條件</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">輸出可NULL</th>
+              <th style="padding:.32rem .3rem;font-weight:700;text-align:left">路徑</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)">
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">發票號碼</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid);line-height:1.5">發票的唯一識別碼。</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)"></td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">A123456789</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">Master</td>
+            </tr>
+            <tr style="border-top:1px solid var(--border)">
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">發票日期</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid);line-height:1.5">發票開立的日期。</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)"></td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">2023-10-01</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--mid)">否</td>
+              <td style="padding:.35rem .3rem;vertical-align:top;color:var(--dark)">Master</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>`
+  }
+};
+function pickFeat(k,btn){
+  document.querySelectorAll('.fc').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  const d=FEAT_DATA[k],el=document.getElementById('fcDet');
+  if(el&&d){
+    el.style.display='block';
+    const visual = d.img
+      ? `<img src="${d.img}" alt="${d.t}" style="width:100%;display:block;height:auto;border-radius:6px"/>`
+      : d.mock;
+    el.innerHTML=`
+      <div style="display:grid;grid-template-columns:1.7fr 1fr;align-items:stretch">
+        <div style="padding:.3rem;display:flex;align-items:center;justify-content:center;background:var(--primary-pale)">${visual}</div>
+        <div style="padding:1.25rem 1.1rem;background:#fff;border-left:1px solid var(--border)">
+          <div style="font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:.5rem">${d.t}</div>
+          <div style="font-size:.85rem;color:var(--mid);line-height:1.85">${d.d}</div>
+        </div>
+      </div>`;
+    if(k==='correction') animateCorrectionField();
+  }
+}
+
+
+let correctionAnimToken=0;
+async function animateCorrectionField(){
+  const myToken=++correctionAnimToken;
+  const el=document.getElementById('corrField');
+  if(!el) return;
+  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+  const from='A1O23', to='A1023';
+  await delay(900);
+  if(myToken!==correctionAnimToken) return;
+
+  for(let i=from.length;i>0;i--){
+    if(myToken!==correctionAnimToken) return;
+    el.textContent=from.slice(0,i-1);
+    await delay(110);
+  }
+  await delay(250);
+
+  for(let i=1;i<=to.length;i++){
+    if(myToken!==correctionAnimToken) return;
+    el.textContent=to.slice(0,i);
+    await delay(140);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+  const firstBtn = document.querySelector('.fc[onclick*="correction"]');
+  if(firstBtn) pickFeat('correction', firstBtn);
+});
+
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+});
+
+document.addEventListener('keydown', (e) => {
+  const key = e.key ? e.key.toLowerCase() : '';
+  if ((e.ctrlKey || e.metaKey) && key === 's') {
+    e.preventDefault();
+  }
+  if ((e.ctrlKey || e.metaKey) && key === 'u') {
+    e.preventDefault();
+  }
+});
+</script>
+
+</body>
+</html>
